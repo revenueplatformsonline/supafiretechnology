@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activar tu servidor — SupaFire Technology Online</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<meta name="description" content="Registra tu usuario y genera tu código de activación de servidor.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #FAFBFC;
+    --bg-alt: #F1F4F8;
+    --bg-card: #FFFFFF;
+    --ink: #0E1420;
+    --ink-soft: #4A5568;
+    --ink-dim: #94A0B2;
+    --blue: #2B6CF6;
+    --blue-glow: #4C8DFF;
+    --purple: #7C3AED;
+    --purple-soft: #9D6BFF;
+    --cyan: #0EA5C4;
+    --dark: #0A0E16;
+    --dark-raised: #121826;
+    --line: rgba(14,20,32,0.09);
+    --line-strong: rgba(14,20,32,0.16);
+    --success: #0F9D63;
+    --success-bright: #34D399;
+    --danger: #DC2626;
+    --radius: 16px;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display:flex;
+    flex-direction:column;
+    position: relative;
+    overflow-x:hidden;
+  }
+  h1,h2,h3{ font-family:'Space Grotesk', sans-serif; letter-spacing:-0.02em; line-height:1.15; }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+  a{ color:inherit; text-decoration:none; }
+
+  .grid-bg{
+    position: fixed; inset:0; z-index:0;
+    background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 20%, transparent 75%);
+    opacity:0.6;
+    pointer-events:none;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
+  }
+
+  header{
+    padding: 22px 28px;
+    display:flex; align-items:center; gap:10px;
+    position: relative; z-index:1;
+    border-bottom: 1px solid var(--line);
+    background: rgba(250,251,252,0.85);
+    backdrop-filter: blur(14px);
+  }
+  .logo-dot{
+    width:9px; height:9px; border-radius:50%;
+    background: var(--blue);
+    box-shadow: 0 0 10px 2px rgba(43,108,246,0.5);
+    animation: pulse-dot 2.4s ease-in-out infinite;
+  }
+  .logo-img{ height: 24px; width:auto; display:block; }
+  @keyframes pulse-dot{ 0%,100%{ opacity:1; transform:scale(1);} 50%{ opacity:0.5; transform:scale(0.72);} }
+  header span.brand{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.02rem; color: var(--ink); }
+  header a.back{ margin-left:auto; font-size:0.86rem; color:var(--ink-soft); }
+  header a.back:hover{ color:var(--ink); }
+
+  main{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 50px 20px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .panel{ width: 100%; max-width: 480px; }
+
+  .step-track{
+    display:flex; align-items:center; gap:8px;
+    margin-bottom: 30px;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--ink-dim);
+  }
+  .step-track .seg{ flex:1; height:3px; border-radius:2px; background: var(--line); overflow:hidden; }
+  .step-track .seg.done, .step-track .seg.active{ background: linear-gradient(90deg, var(--blue), var(--purple)); }
+
+  .card{
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 38px 34px;
+    box-shadow: 0 20px 50px -25px rgba(14,20,32,0.15);
+  }
+
+  .card .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.74rem;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 16px;
+  }
+  .card .eyebrow .dot{ width:6px; height:6px; border-radius:50%; background: var(--success); box-shadow:0 0 6px 1px var(--success); }
+  .card h1{ font-size: 1.6rem; margin-bottom: 10px; color: var(--ink); }
+  .card p.sub{ color: var(--ink-soft); font-size: 0.94rem; margin-bottom: 30px; }
+
+  .plan-detected{
+    display:flex; align-items:center; gap:12px;
+    background: var(--bg-alt); border: 1px solid var(--line); border-radius: 12px;
+    padding: 14px 16px; margin-bottom: 26px;
+  }
+  .plan-detected .pd-icon{
+    width:36px; height:36px; border-radius:10px; flex-shrink:0;
+    background: linear-gradient(100deg, var(--blue), var(--purple));
+    display:flex; align-items:center; justify-content:center; color:#fff;
+  }
+  .plan-detected .pd-text{ font-size:0.82rem; color: var(--ink-soft); }
+  .plan-detected .pd-plan{ font-weight:600; color: var(--ink); font-size:0.92rem; }
+
+  label{
+    display:block;
+    font-size: 0.84rem;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  input[type=text], input[type=email]{
+    width: 100%;
+    padding: 13px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-alt);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.96rem;
+    margin-bottom: 20px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  input::placeholder{ color: var(--ink-dim); }
+  input:focus{ border-color: var(--blue); box-shadow: 0 0 0 3px rgba(43,108,246,0.12); }
+
+  select{
+    width:100%;
+    padding: 13px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-alt);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.96rem;
+    margin-bottom: 24px;
+    outline: none;
+    appearance: none;
+  }
+  select:focus{ border-color: var(--blue); }
+
+  .field-error{
+    display:none;
+    color: var(--danger);
+    font-size: 0.8rem;
+    margin-top: -14px;
+    margin-bottom: 16px;
+  }
+  .field-error.show{ display:block; }
+
+  .btn-primary{
+    width:100%;
+    padding: 15px;
+    border-radius: 10px;
+    background: linear-gradient(100deg, var(--blue), var(--purple));
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.98rem;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 8px 30px -6px rgba(124,58,237,0.35);
+  }
+  .btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 12px 34px -6px rgba(124,58,237,0.5); }
+  .btn-primary:disabled{ opacity:0.6; cursor:not-allowed; transform:none; }
+
+  .spinner-wrap{
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    gap: 22px;
+    padding: 30px 0 10px;
+    text-align:center;
+  }
+  .spinner-wrap.show{ display:flex; }
+  .spinner{
+    width: 46px; height:46px;
+    border-radius: 50%;
+    border: 3px solid var(--line);
+    border-top-color: var(--blue);
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  .spinner-wrap .status-line{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    min-height: 20px;
+  }
+
+  .result-wrap{ display:none; }
+  .result-wrap.show{ display:block; }
+
+  .success-icon{
+    width: 56px; height:56px;
+    border-radius: 50%;
+    background: rgba(15,157,99,0.1);
+    border: 1px solid rgba(15,157,99,0.3);
+    display:flex; align-items:center; justify-content:center;
+    color: var(--success);
+    margin: 0 auto 22px;
+  }
+
+  .code-box{
+    background: var(--bg-alt);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px;
+    text-align:center;
+    margin: 22px 0;
+  }
+  .code-box .code-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+  }
+  .code-box .code-value{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--blue);
+    word-break: break-all;
+    letter-spacing: 0.01em;
+  }
+
+  .copy-btn{
+    display:inline-flex;
+    align-items:center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 9px 16px;
+    border-radius: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--line-strong);
+    color: var(--ink);
+    font-size: 0.84rem;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s ease;
+  }
+  .copy-btn:hover{ border-color: var(--blue); }
+  .copy-btn.copied{ border-color: var(--success); color: var(--success); }
+
+  .warn-box{
+    display:flex; gap:10px; align-items:flex-start;
+    background: rgba(180,83,9,0.06);
+    border: 1px solid rgba(180,83,9,0.22);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 0.84rem;
+    color: #B45309;
+    margin-top: 20px;
+    line-height: 1.5;
+  }
+  .warn-box svg{ flex-shrink:0; margin-top:2px; }
+
+  .next-steps{
+    margin-top: 26px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+  }
+  .next-steps h3{ font-size: 0.98rem; margin-bottom: 14px; color: var(--ink); }
+  .next-steps ol{
+    padding-left: 20px;
+    display:flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .next-steps li{ font-size: 0.88rem; color: var(--ink-soft); }
+  .next-steps li b{ color: var(--ink); font-weight:600; }
+
+  .thanks-line{
+    text-align:center;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    margin-top: 26px;
+  }
+
+  footer{
+    position: relative; z-index:1;
+    text-align:center;
+    padding: 24px;
+    color: var(--ink-dim);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--line);
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<header>
+  <img src="favicon.png" alt="SupaFire" class="logo-img">
+  <span class="brand">SupaFire Technology Online</span>
+  <a href="index.html" class="back">← Volver al sitio</a>
+</header>
+
+<main>
+  <div class="panel">
+    <div class="step-track">
+      <div class="seg done" id="seg1"></div>
+      <div class="seg active" id="seg2"></div>
+      <div class="seg" id="seg3"></div>
+    </div>
+
+    <div class="card">
+
+      <!-- STEP: FORM -->
+      <div id="formStep">
+        <div class="eyebrow"><span class="dot"></span>PAGO CONFIRMADO</div>
+        <h1>Activa tu servidor</h1>
+        <p class="sub">Tu pago fue recibido correctamente. Completa estos datos para generar el código de activación de tu app.</p>
+
+        <div class="plan-detected" id="planDetected" style="display:none;">
+          <div class="pd-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <div class="pd-text">Plan detectado automáticamente</div>
+            <div class="pd-plan" id="pdPlanName">—</div>
+          </div>
+        </div>
+
+        <form id="activationForm" novalidate>
+          <label for="appName">Nombre de tu app o marca</label>
+          <input type="text" id="appName" placeholder="Ej. MiApp, NombreDeTuMarca..." autocomplete="off">
+          <div class="field-error" id="err-appName">Escribe el nombre de tu app para continuar.</div>
+
+          <label for="ownerName">Tu nombre completo</label>
+          <input type="text" id="ownerName" placeholder="Ej. Nombre Apellido" autocomplete="off">
+          <div class="field-error" id="err-ownerName">Escribe tu nombre completo.</div>
+
+          <label for="email">Correo electrónico</label>
+          <input type="email" id="email" placeholder="tucorreo@ejemplo.com" autocomplete="off">
+          <div class="field-error" id="err-email">Escribe un correo válido.</div>
+
+          <label for="plan">Plan adquirido</label>
+          <select id="plan">
+            <option value="Start">SupaFire — Start (20 usuarios)</option>
+            <option value="Pro Advanced">SupaFire — Pro Advanced (40 usuarios)</option>
+            <option value="Premium Owner">SupaFire — Premium Owner (60 usuarios)</option>
+            <option value="Vip Worldwide">SupaFire — Vip Worldwide (100 usuarios)</option>
+            <option value="Excelsior International">SupaFire — Excelsior International (300 usuarios)</option>
+            <option value="Empire State">SupaFire — Empire State (500 usuarios)</option>
+          </select>
+
+          <button type="submit" class="btn-primary" id="submitBtn">Generar código de activación</button>
+        </form>
+      </div>
+
+      <!-- STEP: LOADING -->
+      <div class="spinner-wrap" id="loadingStep">
+        <div class="spinner"></div>
+        <div class="status-line mono" id="statusLine">Conectando con el servidor...</div>
+      </div>
+
+      <!-- STEP: RESULT -->
+      <div class="result-wrap" id="resultStep">
+        <div class="success-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h1 style="text-align:center;">Servidor activado</h1>
+        <p class="sub" style="text-align:center;" id="resultSub">Guarda tu usuario y código. Los necesitarás para activar tu app.</p>
+
+        <div class="code-box">
+          <div class="code-label">Tu usuario</div>
+          <div class="code-value mono" id="outUsername">—</div>
+        </div>
+
+        <div class="code-box">
+          <div class="code-label">Tu código de activación</div>
+          <div class="code-value mono" id="outCode">—</div>
+          <button class="copy-btn" id="copyBtn" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copiar código
+          </button>
+        </div>
+
+        <div class="warn-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.6 1.9 18a1.8 1.8 0 0 0 1.55 2.7h17.1A1.8 1.8 0 0 0 22.1 18L13.7 3.6a1.8 1.8 0 0 0-3.1 0Z"/><path d="M12 9v4"/><path d="M12 16.5h.01"/></svg>
+          <span>Guarda este código en un lugar seguro. Deberás pegarlo en tu <b>Panel Owner → Área de App</b> para completar la activación con nuestros servidores.</span>
+        </div>
+
+        <div class="next-steps">
+          <h3>Próximos pasos</h3>
+          <ol>
+            <li>Abre tu <b>Panel Owner</b>.</li>
+            <li>Ve a la sección <b>Área de App</b>.</li>
+            <li>Pega tu código de activación exactamente como aparece arriba.</li>
+            <li>Nuestro equipo confirmará la conexión con tus servidores.</li>
+          </ol>
+        </div>
+
+        <p class="thanks-line">Gracias por activar tu app con nosotros — bienvenido al equipo.</p>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<footer>
+  © 2026 SupaFire Technology Online — Revenue Platforms Online
+</footer>
+
+<script>
+(function(){
+  const form = document.getElementById('activationForm');
+  const formStep = document.getElementById('formStep');
+  const loadingStep = document.getElementById('loadingStep');
+  const resultStep = document.getElementById('resultStep');
+  const statusLine = document.getElementById('statusLine');
+  const seg2 = document.getElementById('seg2');
+  const seg3 = document.getElementById('seg3');
+  const planSelect = document.getElementById('plan');
+  const planDetected = document.getElementById('planDetected');
+  const pdPlanName = document.getElementById('pdPlanName');
+
+  // ===== Read plan from URL (?plan=start) sent by Stripe's "after payment" redirect =====
+  // Map of short URL codes -> plan values used in the <select>. Configure each Stripe
+  // Payment Link's redirect URL as: activacion.html?plan=start (or pro, premium, vip, excelsior, empire)
+  const planMap = {
+    start: 'Start',
+    pro: 'Pro Advanced',
+    premium: 'Premium Owner',
+    vip: 'Vip Worldwide',
+    excelsior: 'Excelsior International',
+    empire: 'Empire State'
+  };
+
+  (function detectPlanFromURL(){
+    const params = new URLSearchParams(window.location.search);
+    const planParam = (params.get('plan') || '').toLowerCase().trim();
+    if(planParam && planMap[planParam]){
+      const planValue = planMap[planParam];
+      planSelect.value = planValue;
+      pdPlanName.textContent = planSelect.options[planSelect.selectedIndex].text;
+      planDetected.style.display = 'flex';
+    }
+  })();
+
+  function validate(){
+    let ok = true;
+    const appName = document.getElementById('appName').value.trim();
+    const ownerName = document.getElementById('ownerName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    document.getElementById('err-appName').classList.toggle('show', appName.length === 0);
+    document.getElementById('err-ownerName').classList.toggle('show', ownerName.length === 0);
+    document.getElementById('err-email').classList.toggle('show', !emailOk);
+
+    if(appName.length === 0) ok = false;
+    if(ownerName.length === 0) ok = false;
+    if(!emailOk) ok = false;
+    return ok;
+  }
+
+  function slugify(str){
+    return str
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // strip accents
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '')
+      .slice(0, 14);
+  }
+
+  function generateUsername(appName){
+    const base = slugify(appName) || 'app';
+    return base;
+  }
+
+  function generateCode(username){
+    return username + '-ownerserverplatform';
+  }
+
+  const statusMessages = [
+    'Conectando con el servidor...',
+    'Verificando el pago...',
+    'Configurando Supabase...',
+    'Sincronizando con Firebase...',
+    'Generando código de activación...'
+  ];
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(!validate()) return;
+
+    const appName = document.getElementById('appName').value.trim();
+    const ownerName = document.getElementById('ownerName').value.trim();
+    const plan = document.getElementById('plan').value;
+
+    const username = generateUsername(appName);
+    const code = generateCode(username);
+
+    formStep.style.display = 'none';
+    loadingStep.classList.add('show');
+    seg2.classList.remove('active');
+    seg2.classList.add('done');
+    seg3.classList.add('active');
+
+    let i = 0;
+    statusLine.textContent = statusMessages[0];
+    const interval = setInterval(function(){
+      i++;
+      if(i < statusMessages.length){
+        statusLine.textContent = statusMessages[i];
+      }
+    }, 550);
+
+    setTimeout(function(){
+      clearInterval(interval);
+      loadingStep.classList.remove('show');
+      resultStep.classList.add('show');
+
+      document.getElementById('outUsername').textContent = username;
+      document.getElementById('outCode').textContent = code;
+      document.getElementById('resultSub').textContent =
+        ownerName.split(' ')[0] + ', tu plan ' + plan + ' fue registrado. Guarda tu usuario y código.';
+    }, 550 * statusMessages.length + 300);
+  });
+
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    const code = document.getElementById('outCode').textContent;
+    const btn = this;
+    const originalHTML = btn.innerHTML;
+    navigator.clipboard.writeText(code).then(function(){
+      btn.textContent = '✓ Copiado';
+      btn.classList.add('copied');
+      setTimeout(function(){
+        btn.innerHTML = originalHTML;
+        btn.classList.remove('copied');
+      }, 1800);
+    }).catch(function(){
+      const tmp = document.createElement('textarea');
+      tmp.value = code;
+      document.body.appendChild(tmp);
+      tmp.select();
+      document.execCommand('copy');
+      document.body.removeChild(tmp);
+      btn.textContent = '✓ Copiado';
+      btn.classList.add('copied');
+      setTimeout(function(){
+        btn.innerHTML = originalHTML;
+        btn.classList.remove('copied');
+      }, 1800);
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
