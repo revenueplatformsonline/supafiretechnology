@@ -1330,8 +1330,19 @@
     function esc(v){ return String(v ?? "").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m])); }
     function money(v){ return "$" + Number(v).toLocaleString(); }
 
-    function planCardHtml(plan, delayIndex){
+    // "Anual" solo existe por plan cuando Kurt cargó precio Y link de
+    // Stripe anual para ese plan — si falta cualquiera de los dos, ese
+    // plan se muestra en modo mensual aunque el toggle esté en "Anual",
+    // en vez de desaparecer o mostrar un precio sin forma de pagarlo.
+    function hasAnnual(plan){ return plan.price_annual != null && !!plan.stripe_checkout_url_annual; }
+
+    function planCardHtml(plan, delayIndex, mode){
       const delay = "reveal-delay-" + (((delayIndex) % 3) + 1);
+      const annual = mode === "annual" && hasAnnual(plan);
+      const dailyEquivalent = annual ? (plan.price_annual / 365).toFixed(1) : plan.price_daily_equivalent;
+      const mainPrice = annual ? plan.price_annual : plan.price_monthly;
+      const mainLabel = annual ? "facturado al año" : "facturado al mes";
+      const ctaUrl = annual ? plan.stripe_checkout_url_annual : plan.stripe_checkout_url;
       return `<div class="plan-card ${plan.is_featured ? "featured" : ""} reveal ${delay}">
         ${plan.is_featured ? '<div class="plan-badge">FAVORITO</div>' : ""}
         <div class="plan-name mono">${esc(plan.name)}</div>
@@ -1339,32 +1350,69 @@
         <div class="plan-users">Hasta <b>${plan.max_users} usuarios</b></div>
         <div class="price-row">
           <div class="price-daily-tag">Equivale a</div>
-          <div class="price-daily-hero"><span class="amount mono">$${plan.price_daily_equivalent}</span><span class="period">/ día</span></div>
-          <div class="price-monthly-sub"><span class="m-amount">${money(plan.price_monthly)}</span>${plan.price_monthly_original ? `<span class="m-old">${money(plan.price_monthly_original)}</span>` : ""}<span class="m-label">facturado al mes</span></div>
+          <div class="price-daily-hero"><span class="amount mono">$${dailyEquivalent}</span><span class="period">/ día</span></div>
+          <div class="price-monthly-sub"><span class="m-amount">${money(mainPrice)}</span>${!annual && plan.price_monthly_original ? `<span class="m-old">${money(plan.price_monthly_original)}</span>` : ""}<span class="m-label">${mainLabel}</span></div>
         </div>
         ${plan.roi_note ? `<div class="plan-roi">${esc(plan.roi_note)}</div>` : ""}
         <ul class="plan-features">
           ${FEATURES.map(f => `<li>${CHECK_ICON}${esc(f)}</li>`).join("")}
         </ul>
-        ${plan.stripe_checkout_url ? `<a class="plan-cta" href="${esc(plan.stripe_checkout_url)}" target="_blank" rel="noopener">Activar plan ${esc(plan.name)}</a>` : ""}
+        ${ctaUrl ? `<a class="plan-cta" href="${esc(ctaUrl)}" target="_blank" rel="noopener">Activar plan ${esc(plan.name)}${annual ? " (anual)" : ""}</a>` : ""}
+      </div>`;
+    }
+
+    function billingToggleHtml(mode){
+      const btnBase = "font-family:inherit;font-size:0.86rem;font-weight:600;padding:8px 20px;border-radius:999px;border:none;cursor:pointer;transition:background 0.2s,color 0.2s;";
+      const active = "background:var(--ink);color:var(--bg);";
+      const inactive = "background:transparent;color:var(--ink-soft);";
+      return `<div style="display:inline-flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:999px;background:var(--bg-card);margin-bottom:28px">
+        <button type="button" data-billing-mode="monthly" style="${btnBase}${mode === "monthly" ? active : inactive}">Mensual</button>
+        <button type="button" data-billing-mode="annual" style="${btnBase}${mode === "annual" ? active : inactive}">Anual</button>
       </div>`;
     }
 
     async function loadPublicPlans(){
       const grid = document.querySelector("#planes .pricing-grid");
+      const toggleSlot = document.querySelector("#planes .section-lead");
       if (!grid || !window.supabase) return;
       try {
         const supafire = window.supabase.createClient(SUPAFIRE_URL, SUPAFIRE_ANON_KEY);
         const res = await supafire
           .from("supafire_plans")
-          .select("name, max_users, price_monthly, price_monthly_original, price_daily_equivalent, stripe_checkout_url, roi_note, is_featured, order_index")
+          .select("name, max_users, price_monthly, price_monthly_original, price_daily_equivalent, price_annual, stripe_checkout_url, stripe_checkout_url_annual, roi_note, is_featured, order_index")
           .eq("active", true)
           .order("order_index", { ascending: true });
         if (res.error) throw res.error;
         const plans = res.data || [];
         if (!plans.length) return;
-        grid.innerHTML = plans.map(planCardHtml).join("");
-        grid.querySelectorAll(".reveal").forEach(el => window.observeReveal ? window.observeReveal(el) : el.classList.add("in"));
+
+        let mode = "monthly";
+        function render(){
+          grid.innerHTML = plans.map((p, i) => planCardHtml(p, i, mode)).join("");
+          grid.querySelectorAll(".reveal").forEach(el => window.observeReveal ? window.observeReveal(el) : el.classList.add("in"));
+        }
+        render();
+
+        // El toggle solo aparece si al menos un plan tiene precio + link
+        // anual cargados — mientras Kurt no active ninguno, la sección se
+        // ve exactamente igual que hoy (solo mensual).
+        if (plans.some(hasAnnual)) {
+          const toggleWrap = document.createElement("div");
+          toggleWrap.innerHTML = billingToggleHtml(mode);
+          toggleSlot?.insertAdjacentElement("afterend", toggleWrap.firstElementChild);
+          const toggleEl = toggleSlot?.nextElementSibling;
+          toggleEl?.addEventListener("click", (e) => {
+            const btn = e.target.closest("[data-billing-mode]");
+            if (!btn) return;
+            mode = btn.dataset.billingMode;
+            toggleEl.querySelectorAll("[data-billing-mode]").forEach(b => {
+              const isActive = b.dataset.billingMode === mode;
+              b.style.background = isActive ? "var(--ink)" : "transparent";
+              b.style.color = isActive ? "var(--bg)" : "var(--ink-soft)";
+            });
+            render();
+          });
+        }
       } catch (e) {
         // Deja las 6 cards estáticas de respaldo tal como están — son el
         // mismo contenido real de Kurt, así que no hay nada que ocultar.
