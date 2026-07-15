@@ -1290,6 +1290,7 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   // ===== Scroll reveal =====
   (function(){
@@ -1300,6 +1301,77 @@
       });
     }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
     items.forEach(i=> io.observe(i));
+    // Exposed so content injected after this ran (the live Planes fetch
+    // below) can still opt into the same reveal animation instead of
+    // staying at opacity:0 forever — this observer only ever saw the
+    // .reveal elements present in the DOM at page-load time.
+    window.observeReveal = (el) => io.observe(el);
+  })();
+
+  // ===== Planes: sincronizados en vivo con Supa Fire Owner =====
+  // Reemplaza las 6 cards de acá abajo (que quedan como contenido de
+  // respaldo mientras carga, o si el fetch falla) con lo que Kurt tenga
+  // cargado en Contenido → Planes Supa Fire — mismo mecanismo que ya usan
+  // las páginas públicas de Planes de cada cliente (fetch anon directo al
+  // proyecto maestro, sin backend intermedio).
+  (function(){
+    const SUPAFIRE_URL = "https://fnmbewrluzajfcvbopaa.supabase.co";
+    const SUPAFIRE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZubWJld3JsdXphamZjdmJvcGFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNzMxODYsImV4cCI6MjA5ODc0OTE4Nn0.Cbf55ftXjgd8OvQEJ95fkjVXbxwyBJrJ3_kQ3j-kYts";
+
+    const FEATURES = [
+      "Instalación y activación completa de servidores",
+      "Supabase + Firebase configurados",
+      "Publicación en App Store + Google Play",
+      "Sistema de pagos por suscripción",
+      "Asesoría guiada + actualizaciones eventuales",
+    ];
+    const CHECK_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+    function esc(v){ return String(v ?? "").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m])); }
+    function money(v){ return "$" + Number(v).toLocaleString(); }
+
+    function planCardHtml(plan, delayIndex){
+      const delay = "reveal-delay-" + (((delayIndex) % 3) + 1);
+      return `<div class="plan-card ${plan.is_featured ? "featured" : ""} reveal ${delay}">
+        ${plan.is_featured ? '<div class="plan-badge">FAVORITO</div>' : ""}
+        <div class="plan-name mono">${esc(plan.name)}</div>
+        <div class="plan-title">SupaFire Technology Online — ${esc(plan.name)}</div>
+        <div class="plan-users">Hasta <b>${plan.max_users} usuarios</b></div>
+        <div class="price-row">
+          <div class="price-daily-tag">Equivale a</div>
+          <div class="price-daily-hero"><span class="amount mono">$${plan.price_daily_equivalent}</span><span class="period">/ día</span></div>
+          <div class="price-monthly-sub"><span class="m-amount">${money(plan.price_monthly)}</span>${plan.price_monthly_original ? `<span class="m-old">${money(plan.price_monthly_original)}</span>` : ""}<span class="m-label">facturado al mes</span></div>
+        </div>
+        ${plan.roi_note ? `<div class="plan-roi">${esc(plan.roi_note)}</div>` : ""}
+        <ul class="plan-features">
+          ${FEATURES.map(f => `<li>${CHECK_ICON}${esc(f)}</li>`).join("")}
+        </ul>
+        ${plan.stripe_checkout_url ? `<a class="plan-cta" href="${esc(plan.stripe_checkout_url)}" target="_blank" rel="noopener">Activar plan ${esc(plan.name)}</a>` : ""}
+      </div>`;
+    }
+
+    async function loadPublicPlans(){
+      const grid = document.querySelector("#planes .pricing-grid");
+      if (!grid || !window.supabase) return;
+      try {
+        const supafire = window.supabase.createClient(SUPAFIRE_URL, SUPAFIRE_ANON_KEY);
+        const res = await supafire
+          .from("supafire_plans")
+          .select("name, max_users, price_monthly, price_monthly_original, price_daily_equivalent, stripe_checkout_url, roi_note, is_featured, order_index")
+          .eq("active", true)
+          .order("order_index", { ascending: true });
+        if (res.error) throw res.error;
+        const plans = res.data || [];
+        if (!plans.length) return;
+        grid.innerHTML = plans.map(planCardHtml).join("");
+        grid.querySelectorAll(".reveal").forEach(el => window.observeReveal ? window.observeReveal(el) : el.classList.add("in"));
+      } catch (e) {
+        // Deja las 6 cards estáticas de respaldo tal como están — son el
+        // mismo contenido real de Kurt, así que no hay nada que ocultar.
+        try { console.warn("No se pudieron cargar los planes en vivo:", e.message); } catch (e2) {}
+      }
+    }
+    loadPublicPlans();
   })();
 
   // ===== Uptime meter tick =====
