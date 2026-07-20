@@ -188,7 +188,62 @@
   .file-drop input[type=file]{ display:none; }
   .file-drop .fd-label{ font-size:0.88rem; color: var(--ink-soft); }
   .file-drop .fd-name{ font-size:0.84rem; color: var(--blue); font-weight:600; margin-top:6px; word-break: break-all; }
-  .file-hint{ font-size:0.76rem; color: var(--ink-dim); margin: 8px 0 20px; }
+  .file-hint{ font-size:0.76rem; color: var(--ink-dim); margin: 8px 0 4px; }
+
+  .id-doc-options{ display:flex; gap:10px; margin-bottom:4px; }
+  .id-doc-options .file-drop{ flex:1; margin-bottom:0; }
+  .btn-camera{
+    flex:1;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+    border: 1.5px dashed var(--line-strong);
+    border-radius: 10px;
+    background: var(--bg-alt);
+    padding: 18px 14px;
+    text-align:center;
+    cursor:pointer;
+    font-family:'Inter', sans-serif;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    transition: border-color 0.2s ease;
+  }
+  .btn-camera:hover{ border-color: var(--blue); }
+
+  .camera-modal{
+    display:none;
+    position: fixed; inset:0; z-index:50;
+    background: rgba(10,14,22,0.82);
+    align-items:center; justify-content:center;
+    padding: 20px;
+  }
+  .camera-modal.show{ display:flex; }
+  .camera-panel{
+    width:100%; max-width: 420px;
+    background: var(--dark-raised);
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: 0 30px 70px -20px rgba(0,0,0,0.5);
+  }
+  .camera-panel video, .camera-panel canvas{
+    width:100%; border-radius: 10px; background:#000;
+    display:block;
+  }
+  .camera-panel canvas{ display:none; }
+  .camera-status{ font-family:'JetBrains Mono', monospace; font-size:0.78rem; color: rgba(255,255,255,0.6); margin: 10px 0; min-height: 18px; }
+  .camera-actions{ display:flex; gap:10px; margin-top:6px; }
+  .camera-actions button{
+    flex:1;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    font-weight:600;
+    font-size: 0.9rem;
+    cursor:pointer;
+    font-family:'Inter', sans-serif;
+  }
+  .camera-actions .cam-cancel{ background: rgba(255,255,255,0.1); color:#fff; }
+  .camera-actions .cam-capture{ background: linear-gradient(100deg, var(--blue), var(--purple)); color:#fff; }
+  .camera-actions .cam-retake{ background: rgba(255,255,255,0.1); color:#fff; }
+  .camera-actions .cam-use{ background: var(--success); color:#fff; }
 
   .field-error{
     display:none;
@@ -325,13 +380,19 @@
           <select id="plan"></select>
 
           <label for="idDocInput">Foto de tu documento de identidad</label>
-          <label class="file-drop" for="idDocInput">
-            <input type="file" id="idDocInput" accept="image/*,.pdf">
-            <div class="fd-label" id="fdLabel">Tocá para subir una foto o PDF de tu DNI/pasaporte</div>
-            <div class="fd-name" id="fdName"></div>
-          </label>
+          <div class="id-doc-options">
+            <label class="file-drop" for="idDocInput">
+              <input type="file" id="idDocInput" accept="image/*,.pdf">
+              <div class="fd-label" id="fdLabel">Tocá para subir una foto o PDF</div>
+              <div class="fd-name" id="fdName"></div>
+            </label>
+            <button type="button" class="btn-camera" id="openCameraBtn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <span id="cameraBtnLabel">Tomar foto en vivo</span>
+            </button>
+          </div>
           <div class="file-hint">Solo la revisa nuestro equipo para verificar tu identidad — el archivo no es público.</div>
-          <div class="field-error" id="err-idDoc">Subí una foto o PDF de tu documento para continuar.</div>
+          <div class="field-error" id="err-idDoc">Subí o tomá una foto de tu documento para continuar.</div>
 
           <button type="submit" class="btn-primary" id="submitBtn">Enviar para verificación</button>
         </form>
@@ -346,6 +407,22 @@
     </div>
   </div>
 </main>
+
+<div class="camera-modal" id="cameraModal">
+  <div class="camera-panel">
+    <video id="cameraVideo" autoplay playsinline muted></video>
+    <canvas id="cameraCanvas"></canvas>
+    <div class="camera-status mono" id="cameraStatus">Activando cámara...</div>
+    <div class="camera-actions" id="cameraActionsLive">
+      <button type="button" class="cam-cancel" id="camCancelBtn">Cancelar</button>
+      <button type="button" class="cam-capture" id="camCaptureBtn">Capturar</button>
+    </div>
+    <div class="camera-actions" id="cameraActionsPreview" style="display:none;">
+      <button type="button" class="cam-retake" id="camRetakeBtn">Repetir</button>
+      <button type="button" class="cam-use" id="camUseBtn">Usar esta foto</button>
+    </div>
+  </div>
+</div>
 
 <footer>
   © 2026 SupaFire Technology Online — Revenue Platforms Online
@@ -378,6 +455,24 @@
   const idDocInput = document.getElementById('idDocInput');
   const fdName = document.getElementById('fdName');
   const fdLabel = document.getElementById('fdLabel');
+  const openCameraBtn = document.getElementById('openCameraBtn');
+  const cameraModal = document.getElementById('cameraModal');
+  const cameraVideo = document.getElementById('cameraVideo');
+  const cameraCanvas = document.getElementById('cameraCanvas');
+  const cameraStatus = document.getElementById('cameraStatus');
+  const cameraActionsLive = document.getElementById('cameraActionsLive');
+  const cameraActionsPreview = document.getElementById('cameraActionsPreview');
+  const camCancelBtn = document.getElementById('camCancelBtn');
+  const camCaptureBtn = document.getElementById('camCaptureBtn');
+  const camRetakeBtn = document.getElementById('camRetakeBtn');
+  const camUseBtn = document.getElementById('camUseBtn');
+
+  // Único archivo "activo" para el documento de identidad, venga de la
+  // subida manual (input[type=file]) o de la captura en vivo — el resto
+  // del formulario (validate(), el submit) lee siempre de acá, nunca de
+  // idDocInput.files directamente, así ambos caminos son intercambiables.
+  let selectedIdFile = null;
+  let cameraStream = null;
 
   // ===== Read the plan chosen on index.html's "Activar plan" button =====
   // index.html now links here as activacion.html?plan_id={uuid}&billing=
@@ -442,9 +537,77 @@
 
   idDocInput.addEventListener('change', function(){
     const f = idDocInput.files && idDocInput.files[0];
-    if(!f){ fdName.textContent = ''; fdLabel.textContent = 'Tocá para subir una foto o PDF de tu DNI/pasaporte'; return; }
+    if(!f){ return; }
+    selectedIdFile = f;
     fdLabel.textContent = 'Archivo elegido:';
     fdName.textContent = f.name;
+  });
+
+  // ===== Tomar foto en vivo (getUserMedia) =====
+  // Alternativa a subir un archivo: abre la cámara del dispositivo acá
+  // mismo, sin salir de la página, y el frame capturado se usa exactamente
+  // igual que un archivo subido (selectedIdFile).
+  function stopCameraStream(){
+    if(cameraStream){
+      cameraStream.getTracks().forEach(function(t){ t.stop(); });
+      cameraStream = null;
+    }
+  }
+
+  function resetCameraModalToLive(){
+    cameraVideo.style.display = 'block';
+    cameraCanvas.style.display = 'none';
+    cameraActionsLive.style.display = 'flex';
+    cameraActionsPreview.style.display = 'none';
+  }
+
+  async function openCamera(){
+    cameraModal.classList.add('show');
+    resetCameraModalToLive();
+    cameraStatus.textContent = 'Activando cámara...';
+    try{
+      cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+      cameraVideo.srcObject = cameraStream;
+      cameraStatus.textContent = 'Encuadrá tu documento y capturá.';
+    }catch(e){
+      cameraStatus.textContent = 'No pudimos acceder a la cámara (' + (e && e.message ? e.message : 'permiso denegado') + '). Usá "subir archivo" en su lugar.';
+    }
+  }
+
+  function closeCamera(){
+    stopCameraStream();
+    cameraModal.classList.remove('show');
+  }
+
+  openCameraBtn.addEventListener('click', openCamera);
+  camCancelBtn.addEventListener('click', closeCamera);
+
+  camCaptureBtn.addEventListener('click', function(){
+    if(!cameraStream) return;
+    cameraCanvas.width = cameraVideo.videoWidth;
+    cameraCanvas.height = cameraVideo.videoHeight;
+    cameraCanvas.getContext('2d').drawImage(cameraVideo, 0, 0, cameraCanvas.width, cameraCanvas.height);
+    cameraVideo.style.display = 'none';
+    cameraCanvas.style.display = 'block';
+    cameraActionsLive.style.display = 'none';
+    cameraActionsPreview.style.display = 'flex';
+    cameraStatus.textContent = '¿La foto se ve clara y completa?';
+  });
+
+  camRetakeBtn.addEventListener('click', function(){
+    resetCameraModalToLive();
+    cameraStatus.textContent = 'Encuadrá tu documento y capturá.';
+  });
+
+  camUseBtn.addEventListener('click', function(){
+    cameraCanvas.toBlob(function(blob){
+      if(!blob) return;
+      selectedIdFile = new File([blob], 'documento-camara.jpg', { type: 'image/jpeg' });
+      fdLabel.textContent = 'Foto tomada con la cámara:';
+      fdName.textContent = selectedIdFile.name;
+      idDocInput.value = ''; // evita que un archivo elegido antes pise esta captura
+      closeCamera();
+    }, 'image/jpeg', 0.92);
   });
 
   function validate(){
@@ -454,7 +617,7 @@
     const email = document.getElementById('email').value.trim();
     const phone = document.getElementById('phone').value.trim();
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    const file = idDocInput.files && idDocInput.files[0];
+    const file = selectedIdFile;
 
     document.getElementById('err-appName').classList.toggle('show', appName.length === 0);
     document.getElementById('err-ownerName').classList.toggle('show', ownerName.length === 0);
@@ -486,7 +649,7 @@
     const phone = document.getElementById('phone').value.trim();
     const taxId = document.getElementById('taxId').value.trim();
     const requestedPlanId = planSelect.value;
-    const file = idDocInput.files[0];
+    const file = selectedIdFile;
 
     const submitBtn = document.getElementById('submitBtn');
     submitBtn.disabled = true;
