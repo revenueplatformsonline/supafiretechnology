@@ -1133,6 +1133,11 @@
       <h2 class="section-title reveal reveal-delay-1">Elige según la capacidad operativa de tu aplicación.</h2>
       <p class="section-lead reveal reveal-delay-2">Todos los planes incluyen VPS activo 24/7, Supabase + Firebase, licencias, mantenimiento y publicación en ambas tiendas. La diferencia es la capacidad de usuarios.</p>
 
+      <!-- Respaldo estático (fetch en vivo lo reemplaza abajo si carga) —
+      cada botón manda primero a activacion.html (verificación de
+      identidad); ese short-code (?plan=start, etc.) es el fallback por
+      nombre que activacion.html matchea contra planMap, ya que este
+      bloque no conoce los ids reales de supafire_plans. -->
       <div class="pricing-grid">
 
         <div class="plan-card reveal reveal-delay-1">
@@ -1152,7 +1157,7 @@
             <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Sistema de pagos por suscripción</li>
             <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Asesoría guiada + actualizaciones eventuales</li>
           </ul>
-          <a class="plan-cta" href="https://buy.stripe.com/eVq14h1aUgzx4bt8bJ8og00" target="_blank" rel="noopener">Activar plan Start</a>
+          <a class="plan-cta" href="activacion.html?plan=start" rel="noopener">Activar plan Start</a>
         </div>
 
         <div class="plan-card reveal reveal-delay-2">
@@ -1172,7 +1177,7 @@
             <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Sistema de pagos por suscripción</li>
             <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Asesoría guiada + actualizaciones eventuales</li>
           </ul>
-          <a class="plan-cta" href="https://buy.stripe.com/6oUbIV06Qerp5fxcrZ8og05" target="_blank" rel="noopener">Activar plan Pro Advanced</a>
+          <a class="plan-cta" href="activacion.html?plan=pro" rel="noopener">Activar plan Pro Advanced</a>
         </div>
 
         <div class="plan-card reveal reveal-delay-3">
@@ -1192,7 +1197,7 @@
             <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Sistema de pagos por suscripción</li>
             <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Asesoría guiada + actualizaciones eventuales</li>
           </ul>
-          <a class="plan-cta" href="https://buy.stripe.com/6oU8wJ5rabfd23leA78og06" target="_blank" rel="noopener">Activar plan Premium Owner</a>
+          <a class="plan-cta" href="activacion.html?plan=premium" rel="noopener">Activar plan Premium Owner</a>
         </div>
 
         <div class="plan-card featured reveal reveal-delay-1">
@@ -1213,7 +1218,7 @@
             <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Sistema de pagos por suscripción</li>
             <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Asesoría guiada + actualizaciones eventuales</li>
           </ul>
-          <a class="plan-cta" href="https://buy.stripe.com/28EbIVbPydnldM30Jh8og07" target="_blank" rel="noopener">Activar plan Vip Worldwide</a>
+          <a class="plan-cta" href="activacion.html?plan=vip" rel="noopener">Activar plan Vip Worldwide</a>
         </div>
 
         <div class="plan-card reveal reveal-delay-2">
@@ -1233,7 +1238,7 @@
             <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Sistema de pagos por suscripción</li>
             <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Asesoría guiada + actualizaciones eventuales</li>
           </ul>
-          <a class="plan-cta" href="https://buy.stripe.com/eVqdR39Hq5UT4bt9fN8og08" target="_blank" rel="noopener">Activar plan Excelsior</a>
+          <a class="plan-cta" href="activacion.html?plan=excelsior" rel="noopener">Activar plan Excelsior</a>
         </div>
 
         <div class="plan-card reveal reveal-delay-3">
@@ -1253,7 +1258,7 @@
             <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Sistema de pagos por suscripción</li>
             <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Asesoría guiada + actualizaciones eventuales</li>
           </ul>
-          <a class="plan-cta" href="https://buy.stripe.com/bJe6oBf1K3ML23l77F8og09" target="_blank" rel="noopener">Activar plan Empire State</a>
+          <a class="plan-cta" href="activacion.html?plan=empire" rel="noopener">Activar plan Empire State</a>
         </div>
 
       </div>
@@ -1342,7 +1347,14 @@
       const dailyEquivalent = annual ? (plan.price_annual / 365).toFixed(1) : plan.price_daily_equivalent;
       const mainPrice = annual ? plan.price_annual : plan.price_monthly;
       const mainLabel = annual ? "facturado al año" : "facturado al mes";
-      const ctaUrl = annual ? plan.stripe_checkout_url_annual : plan.stripe_checkout_url;
+      // Ya no linkea directo a Stripe: primero pasa por la verificación de
+      // identidad en activacion.html, que recién al final redirige al pago
+      // real (ver ese archivo). Sigue exigiendo que el link de Stripe de
+      // este plan/modalidad exista antes de mostrar el botón, para no
+      // mandar a nadie a completar el formulario si termina en un
+      // callejón sin salida.
+      const hasCheckoutUrl = !!(annual ? plan.stripe_checkout_url_annual : plan.stripe_checkout_url);
+      const ctaUrl = hasCheckoutUrl ? `activacion.html?plan_id=${encodeURIComponent(plan.id)}&billing=${annual ? "annual" : "monthly"}` : null;
       return `<div class="plan-card ${plan.is_featured ? "featured" : ""} reveal ${delay}">
         ${plan.is_featured ? '<div class="plan-badge">FAVORITO</div>' : ""}
         <div class="plan-name mono">${esc(plan.name)}</div>
@@ -1357,7 +1369,7 @@
         <ul class="plan-features">
           ${FEATURES.map(f => `<li>${CHECK_ICON}${esc(f)}</li>`).join("")}
         </ul>
-        ${ctaUrl ? `<a class="plan-cta" href="${esc(ctaUrl)}" target="_blank" rel="noopener">Activar plan ${esc(plan.name)}${annual ? " (anual)" : ""}</a>` : ""}
+        ${ctaUrl ? `<a class="plan-cta" href="${esc(ctaUrl)}" rel="noopener">Activar plan ${esc(plan.name)}${annual ? " (anual)" : ""}</a>` : ""}
       </div>`;
     }
 
@@ -1379,7 +1391,7 @@
         const supafire = window.supabase.createClient(SUPAFIRE_URL, SUPAFIRE_ANON_KEY);
         const res = await supafire
           .from("supafire_plans")
-          .select("name, max_users, price_monthly, price_monthly_original, price_daily_equivalent, price_annual, stripe_checkout_url, stripe_checkout_url_annual, roi_note, is_featured, order_index")
+          .select("id, name, max_users, price_monthly, price_monthly_original, price_daily_equivalent, price_annual, stripe_checkout_url, stripe_checkout_url_annual, roi_note, is_featured, order_index")
           .eq("active", true)
           .order("order_index", { ascending: true });
         if (res.error) throw res.error;
