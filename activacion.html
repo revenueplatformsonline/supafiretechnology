@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Activar tu servidor — SupaFire Technology Online</title>
+<title>Verifica tu identidad — SupaFire Technology Online</title>
 <link rel="icon" type="image/png" href="favicon.png">
-<meta name="description" content="Registra tu usuario y genera tu código de activación de servidor.">
+<meta name="description" content="Completa tus datos y verifica tu identidad para activar tu cuenta.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -142,7 +142,7 @@
     margin-bottom: 8px;
     font-weight: 500;
   }
-  input[type=text], input[type=email]{
+  input[type=text], input[type=email], input[type=tel]{
     width: 100%;
     padding: 13px 14px;
     border-radius: 10px;
@@ -172,6 +172,23 @@
     appearance: none;
   }
   select:focus{ border-color: var(--blue); }
+
+  .file-drop{
+    display:block;
+    border: 1.5px dashed var(--line-strong);
+    border-radius: 10px;
+    background: var(--bg-alt);
+    padding: 18px 14px;
+    text-align:center;
+    cursor:pointer;
+    margin-bottom: 4px;
+    transition: border-color 0.2s ease;
+  }
+  .file-drop:hover{ border-color: var(--blue); }
+  .file-drop input[type=file]{ display:none; }
+  .file-drop .fd-label{ font-size:0.88rem; color: var(--ink-soft); }
+  .file-drop .fd-name{ font-size:0.84rem; color: var(--blue); font-weight:600; margin-top:6px; word-break: break-all; }
+  .file-hint{ font-size:0.76rem; color: var(--ink-dim); margin: 8px 0 20px; }
 
   .field-error{
     display:none;
@@ -239,9 +256,9 @@
     background: var(--bg-alt);
     border: 1px solid var(--line);
     border-radius: 12px;
-    padding: 20px;
+    padding: 16px 20px;
     text-align:center;
-    margin: 22px 0;
+    margin: 14px 0;
   }
   .code-box .code-label{
     font-family:'JetBrains Mono', monospace;
@@ -249,34 +266,15 @@
     color: var(--ink-dim);
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
   .code-box .code-value{
-    font-family:'JetBrains Mono', monospace;
-    font-size: 1.15rem;
+    font-family:'Space Grotesk', sans-serif;
+    font-size: 1.05rem;
     font-weight: 700;
-    color: var(--blue);
-    word-break: break-all;
-    letter-spacing: 0.01em;
-  }
-
-  .copy-btn{
-    display:inline-flex;
-    align-items:center;
-    gap: 8px;
-    margin-top: 14px;
-    padding: 9px 16px;
-    border-radius: 8px;
-    background: var(--bg-card);
-    border: 1px solid var(--line-strong);
     color: var(--ink);
-    font-size: 0.84rem;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    transition: border-color 0.2s ease;
+    word-break: break-word;
   }
-  .copy-btn:hover{ border-color: var(--blue); }
-  .copy-btn.copied{ border-color: var(--success); color: var(--success); }
 
   .warn-box{
     display:flex; gap:10px; align-items:flex-start;
@@ -290,6 +288,20 @@
     line-height: 1.5;
   }
   .warn-box svg{ flex-shrink:0; margin-top:2px; }
+
+  .error-box{
+    display:none;
+    gap:10px; align-items:flex-start;
+    background: rgba(220,38,38,0.06);
+    border: 1px solid rgba(220,38,38,0.25);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 0.86rem;
+    color: var(--danger);
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  .error-box.show{ display:flex; }
 
   .next-steps{
     margin-top: 26px;
@@ -346,8 +358,8 @@
       <!-- STEP: FORM -->
       <div id="formStep">
         <div class="eyebrow"><span class="dot"></span>PAGO CONFIRMADO</div>
-        <h1>Activa tu servidor</h1>
-        <p class="sub">Tu pago fue recibido correctamente. Completa estos datos para generar el código de activación de tu app.</p>
+        <h1>Verifica tu identidad</h1>
+        <p class="sub">Tu pago fue recibido. Completa estos datos y subí una foto de tu documento de identidad — nuestro equipo revisa y aprueba tu cuenta a mano antes de activarla.</p>
 
         <div class="plan-detected" id="planDetected" style="display:none;">
           <div class="pd-icon">
@@ -358,6 +370,8 @@
             <div class="pd-plan" id="pdPlanName">—</div>
           </div>
         </div>
+
+        <div class="error-box" id="formError"></div>
 
         <form id="activationForm" novalidate>
           <label for="appName">Nombre de tu app o marca</label>
@@ -372,24 +386,33 @@
           <input type="email" id="email" placeholder="tucorreo@ejemplo.com" autocomplete="off">
           <div class="field-error" id="err-email">Escribe un correo válido.</div>
 
-          <label for="plan">Plan adquirido</label>
-          <select id="plan">
-            <option value="Start">SupaFire — Start (20 usuarios)</option>
-            <option value="Pro Advanced">SupaFire — Pro Advanced (40 usuarios)</option>
-            <option value="Premium Owner">SupaFire — Premium Owner (60 usuarios)</option>
-            <option value="Vip Worldwide">SupaFire — Vip Worldwide (100 usuarios)</option>
-            <option value="Excelsior International">SupaFire — Excelsior International (300 usuarios)</option>
-            <option value="Empire State">SupaFire — Empire State (500 usuarios)</option>
-          </select>
+          <label for="phone">WhatsApp / teléfono</label>
+          <input type="tel" id="phone" placeholder="+54 9 11 1234 5678" autocomplete="off">
+          <div class="field-error" id="err-phone">Escribe un teléfono de contacto.</div>
 
-          <button type="submit" class="btn-primary" id="submitBtn">Generar código de activación</button>
+          <label for="taxId">CUIT / dato fiscal <span style="font-weight:400;color:var(--ink-dim)">(opcional)</span></label>
+          <input type="text" id="taxId" placeholder="Si vas a facturar a tu empresa" autocomplete="off">
+
+          <label for="plan">Plan adquirido</label>
+          <select id="plan"></select>
+
+          <label for="idDocInput">Foto de tu documento de identidad</label>
+          <label class="file-drop" for="idDocInput">
+            <input type="file" id="idDocInput" accept="image/*,.pdf">
+            <div class="fd-label" id="fdLabel">Tocá para subir una foto o PDF de tu DNI/pasaporte</div>
+            <div class="fd-name" id="fdName"></div>
+          </label>
+          <div class="file-hint">Solo la revisa nuestro equipo para verificar tu identidad — el archivo no es público.</div>
+          <div class="field-error" id="err-idDoc">Subí una foto o PDF de tu documento para continuar.</div>
+
+          <button type="submit" class="btn-primary" id="submitBtn">Enviar para verificación</button>
         </form>
       </div>
 
       <!-- STEP: LOADING -->
       <div class="spinner-wrap" id="loadingStep">
         <div class="spinner"></div>
-        <div class="status-line mono" id="statusLine">Conectando con el servidor...</div>
+        <div class="status-line mono" id="statusLine">Subiendo tu documento...</div>
       </div>
 
       <!-- STEP: RESULT -->
@@ -397,39 +420,34 @@
         <div class="success-icon">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
-        <h1 style="text-align:center;">Servidor activado</h1>
-        <p class="sub" style="text-align:center;" id="resultSub">Guarda tu usuario y código. Los necesitarás para activar tu app.</p>
+        <h1 style="text-align:center;">Solicitud recibida</h1>
+        <p class="sub" style="text-align:center;" id="resultSub">Guardá esta pantalla — te vamos a escribir en cuanto la aprobemos.</p>
 
         <div class="code-box">
-          <div class="code-label">Tu usuario</div>
-          <div class="code-value mono" id="outUsername">—</div>
+          <div class="code-label">Marca</div>
+          <div class="code-value" id="outBrand">—</div>
         </div>
 
         <div class="code-box">
-          <div class="code-label">Tu código de activación</div>
-          <div class="code-value mono" id="outCode">—</div>
-          <button class="copy-btn" id="copyBtn" type="button">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            Copiar código
-          </button>
+          <div class="code-label">Plan solicitado</div>
+          <div class="code-value" id="outPlan">—</div>
         </div>
 
         <div class="warn-box">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.6 1.9 18a1.8 1.8 0 0 0 1.55 2.7h17.1A1.8 1.8 0 0 0 22.1 18L13.7 3.6a1.8 1.8 0 0 0-3.1 0Z"/><path d="M12 9v4"/><path d="M12 16.5h.01"/></svg>
-          <span>Guarda este código en un lugar seguro. Deberás pegarlo en tu <b>Panel Owner → Área de App</b> para completar la activación con nuestros servidores.</span>
+          <span>Tu documento de identidad ya quedó guardado para revisión — no hace falta que lo reenvíes por ningún otro medio.</span>
         </div>
 
         <div class="next-steps">
           <h3>Próximos pasos</h3>
           <ol>
-            <li>Abre tu <b>Panel Owner</b>.</li>
-            <li>Ve a la sección <b>Área de App</b>.</li>
-            <li>Pega tu código de activación exactamente como aparece arriba.</li>
-            <li>Nuestro equipo confirmará la conexión con tus servidores.</li>
+            <li>Revisamos tu documento de identidad a mano.</li>
+            <li>Te escribimos a <b id="outEmail">tu email</b> con tu usuario y contraseña del <b>Panel Owner</b>.</li>
+            <li>Iniciás sesión y ya podés empezar a configurar tu app.</li>
           </ol>
         </div>
 
-        <p class="thanks-line">Gracias por activar tu app con nosotros — bienvenido al equipo.</p>
+        <p class="thanks-line">Gracias por confiar en nosotros — bienvenido al equipo.</p>
       </div>
 
     </div>
@@ -440,22 +458,39 @@
   © 2026 SupaFire Technology Online — Revenue Platforms Online
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function(){
+  // Mismo proyecto maestro + anon key que index.html ya usa para leer
+  // supafire_plans en vivo — acá además se usa para escribir (subir el
+  // documento + insertar la solicitud), con RLS que solo permite insert a
+  // anon (ver migración signup_requests: sin select/update/delete), así
+  // que un visitante no puede leer ni aprobar su propia solicitud.
+  const SUPAFIRE_URL = "https://fnmbewrluzajfcvbopaa.supabase.co";
+  const SUPAFIRE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZubWJld3JsdXphamZjdmJvcGFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNzMxODYsImV4cCI6MjA5ODc0OTE4Nn0.Cbf55ftXjgd8OvQEJ95fkjVXbxwyBJrJ3_kQ3j-kYts";
+  const supafire = window.supabase.createClient(SUPAFIRE_URL, SUPAFIRE_ANON_KEY);
+
+  const MAX_FILE_BYTES = 15 * 1024 * 1024; // 15MB — chequeo rápido en el navegador, el límite real lo pone el bucket
+
   const form = document.getElementById('activationForm');
   const formStep = document.getElementById('formStep');
   const loadingStep = document.getElementById('loadingStep');
   const resultStep = document.getElementById('resultStep');
   const statusLine = document.getElementById('statusLine');
+  const formError = document.getElementById('formError');
   const seg2 = document.getElementById('seg2');
   const seg3 = document.getElementById('seg3');
   const planSelect = document.getElementById('plan');
   const planDetected = document.getElementById('planDetected');
   const pdPlanName = document.getElementById('pdPlanName');
+  const idDocInput = document.getElementById('idDocInput');
+  const fdName = document.getElementById('fdName');
+  const fdLabel = document.getElementById('fdLabel');
 
   // ===== Read plan from URL (?plan=start) sent by Stripe's "after payment" redirect =====
-  // Map of short URL codes -> plan values used in the <select>. Configure each Stripe
-  // Payment Link's redirect URL as: activacion.html?plan=start (or pro, premium, vip, excelsior, empire)
+  // Map of short URL codes -> plan names as they exist in supafire_plans —
+  // configure each Stripe Payment Link's redirect URL as:
+  // activacion.html?plan=start (o pro, premium, vip, excelsior, empire)
   const planMap = {
     start: 'Start',
     pro: 'Pro Advanced',
@@ -464,123 +499,142 @@
     excelsior: 'Excelsior International',
     empire: 'Empire State'
   };
-
-  (function detectPlanFromURL(){
+  const detectedPlanName = (function(){
     const params = new URLSearchParams(window.location.search);
     const planParam = (params.get('plan') || '').toLowerCase().trim();
-    if(planParam && planMap[planParam]){
-      const planValue = planMap[planParam];
-      planSelect.value = planValue;
-      pdPlanName.textContent = planSelect.options[planSelect.selectedIndex].text;
-      planDetected.style.display = 'flex';
-    }
+    return planParam && planMap[planParam] ? planMap[planParam] : null;
   })();
+
+  // El <select> de plan se llena en vivo desde supafire_plans (mismo
+  // catálogo real que edita Kurt en Contenido → Planes Supa Fire) en vez
+  // de una lista fija en el HTML — así nunca queda desincronizado, y el
+  // id real que necesita signup_requests.requested_plan_id sale directo
+  // de acá, sin adivinar por nombre.
+  async function loadPlans(){
+    try{
+      const res = await supafire
+        .from('supafire_plans')
+        .select('id, name, max_users')
+        .eq('active', true)
+        .order('order_index', { ascending: true });
+      if(res.error) throw res.error;
+      const plans = res.data || [];
+      planSelect.innerHTML = plans.map(function(p){
+        return '<option value="' + p.id + '" data-name="' + p.name.replace(/"/g,'&quot;') + '">SupaFire — ' + p.name + ' (' + p.max_users + ' usuarios)</option>';
+      }).join('');
+      if(detectedPlanName){
+        const match = plans.find(function(p){ return p.name === detectedPlanName; });
+        if(match){
+          planSelect.value = match.id;
+          pdPlanName.textContent = 'SupaFire — ' + match.name;
+          planDetected.style.display = 'flex';
+        }
+      }
+    }catch(e){
+      formError.textContent = 'No pudimos cargar los planes disponibles — recargá la página. (' + e.message + ')';
+      formError.classList.add('show');
+    }
+  }
+  loadPlans();
+
+  idDocInput.addEventListener('change', function(){
+    const f = idDocInput.files && idDocInput.files[0];
+    if(!f){ fdName.textContent = ''; fdLabel.textContent = 'Tocá para subir una foto o PDF de tu DNI/pasaporte'; return; }
+    fdLabel.textContent = 'Archivo elegido:';
+    fdName.textContent = f.name;
+  });
 
   function validate(){
     let ok = true;
     const appName = document.getElementById('appName').value.trim();
     const ownerName = document.getElementById('ownerName').value.trim();
     const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const file = idDocInput.files && idDocInput.files[0];
 
     document.getElementById('err-appName').classList.toggle('show', appName.length === 0);
     document.getElementById('err-ownerName').classList.toggle('show', ownerName.length === 0);
     document.getElementById('err-email').classList.toggle('show', !emailOk);
+    document.getElementById('err-phone').classList.toggle('show', phone.length === 0);
+    document.getElementById('err-idDoc').classList.toggle('show', !file);
 
     if(appName.length === 0) ok = false;
     if(ownerName.length === 0) ok = false;
     if(!emailOk) ok = false;
+    if(phone.length === 0) ok = false;
+    if(!file) ok = false;
+    if(file && file.size > MAX_FILE_BYTES){
+      document.getElementById('err-idDoc').textContent = 'El archivo es muy pesado (máx. 15MB) — probá con una foto más liviana.';
+      document.getElementById('err-idDoc').classList.add('show');
+      ok = false;
+    }
     return ok;
   }
 
-  function slugify(str){
-    return str
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // strip accents
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '')
-      .slice(0, 14);
-  }
-
-  function generateUsername(appName){
-    const base = slugify(appName) || 'app';
-    return base;
-  }
-
-  function generateCode(username){
-    return username + '-ownerserverplatform';
-  }
-
-  const statusMessages = [
-    'Conectando con el servidor...',
-    'Verificando el pago...',
-    'Configurando Supabase...',
-    'Sincronizando con Firebase...',
-    'Generando código de activación...'
-  ];
-
   form.addEventListener('submit', function(e){
     e.preventDefault();
+    formError.classList.remove('show');
     if(!validate()) return;
 
     const appName = document.getElementById('appName').value.trim();
     const ownerName = document.getElementById('ownerName').value.trim();
-    const plan = document.getElementById('plan').value;
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const taxId = document.getElementById('taxId').value.trim();
+    const requestedPlanId = planSelect.value;
+    const planLabel = planSelect.options[planSelect.selectedIndex] ? planSelect.options[planSelect.selectedIndex].getAttribute('data-name') : '';
+    const file = idDocInput.files[0];
 
-    const username = generateUsername(appName);
-    const code = generateCode(username);
-
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
     formStep.style.display = 'none';
     loadingStep.classList.add('show');
     seg2.classList.remove('active');
     seg2.classList.add('done');
     seg3.classList.add('active');
+    statusLine.textContent = 'Subiendo tu documento...';
 
-    let i = 0;
-    statusLine.textContent = statusMessages[0];
-    const interval = setInterval(function(){
-      i++;
-      if(i < statusMessages.length){
-        statusLine.textContent = statusMessages[i];
-      }
-    }, 550);
+    const requestId = crypto.randomUUID();
+    const ext = (file.name.split('.').pop() || 'bin').toLowerCase().replace(/[^a-z0-9]/g, '') || 'bin';
+    const docPath = requestId + '/documento.' + ext;
 
-    setTimeout(function(){
-      clearInterval(interval);
-      loadingStep.classList.remove('show');
-      resultStep.classList.add('show');
+    supafire.storage.from('signup-documents').upload(docPath, file, { contentType: file.type || undefined })
+      .then(function(uploadRes){
+        if(uploadRes.error) throw uploadRes.error;
+        statusLine.textContent = 'Guardando tu solicitud...';
+        return supafire.from('signup_requests').insert({
+          id: requestId,
+          brand_name: appName,
+          owner_name: ownerName,
+          owner_email: email,
+          phone: phone,
+          tax_id: taxId || null,
+          requested_plan_id: requestedPlanId || null,
+          id_document_path: docPath
+        });
+      })
+      .then(function(insertRes){
+        if(insertRes.error) throw insertRes.error;
 
-      document.getElementById('outUsername').textContent = username;
-      document.getElementById('outCode').textContent = code;
-      document.getElementById('resultSub').textContent =
-        ownerName.split(' ')[0] + ', tu plan ' + plan + ' fue registrado. Guarda tu usuario y código.';
-    }, 550 * statusMessages.length + 300);
-  });
-
-  document.getElementById('copyBtn').addEventListener('click', function(){
-    const code = document.getElementById('outCode').textContent;
-    const btn = this;
-    const originalHTML = btn.innerHTML;
-    navigator.clipboard.writeText(code).then(function(){
-      btn.textContent = '✓ Copiado';
-      btn.classList.add('copied');
-      setTimeout(function(){
-        btn.innerHTML = originalHTML;
-        btn.classList.remove('copied');
-      }, 1800);
-    }).catch(function(){
-      const tmp = document.createElement('textarea');
-      tmp.value = code;
-      document.body.appendChild(tmp);
-      tmp.select();
-      document.execCommand('copy');
-      document.body.removeChild(tmp);
-      btn.textContent = '✓ Copiado';
-      btn.classList.add('copied');
-      setTimeout(function(){
-        btn.innerHTML = originalHTML;
-        btn.classList.remove('copied');
-      }, 1800);
-    });
+        loadingStep.classList.remove('show');
+        resultStep.classList.add('show');
+        document.getElementById('outBrand').textContent = appName;
+        document.getElementById('outPlan').textContent = planLabel || '—';
+        document.getElementById('outEmail').textContent = email;
+        document.getElementById('resultSub').textContent =
+          ownerName.split(' ')[0] + ', recibimos tu solicitud del plan ' + (planLabel || 'elegido') + '. Guardá esta pantalla.';
+      })
+      .catch(function(err){
+        loadingStep.classList.remove('show');
+        formStep.style.display = 'block';
+        seg2.classList.add('active');
+        seg2.classList.remove('done');
+        seg3.classList.remove('active');
+        submitBtn.disabled = false;
+        formError.textContent = 'No pudimos enviar tu solicitud — probá de nuevo en unos segundos. (' + (err && err.message ? err.message : 'error desconocido') + ')';
+        formError.classList.add('show');
+      });
   });
 })();
 </script>
