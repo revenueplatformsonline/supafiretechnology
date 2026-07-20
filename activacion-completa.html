@@ -323,7 +323,15 @@
   // dashboard — sin webhook ni API key, ver la doc de Stripe sobre
   // Payment Links. activacion.html metió el id de la solicitud acá antes
   // de mandar al pago.
-  const requestId = new URLSearchParams(window.location.search).get('utm_content');
+  //
+  // Defensivo: si el link de Stripe guardado en el catálogo de planes ya
+  // traía su propio "utm_content" antes de que activacion.html empezara a
+  // limpiarlo, la URL de vuelta puede traer DOS utm_content — .get()
+  // devuelve el primero, que sería el viejo/ajeno, no el de esta
+  // solicitud. getAll()+pop() se queda con el ÚLTIMO, que es siempre el
+  // que activacion.html agregó al final para este pago específico.
+  const utmContentValues = new URLSearchParams(window.location.search).getAll('utm_content');
+  const requestId = utmContentValues.length ? utmContentValues[utmContentValues.length - 1] : null;
   if(!requestId){
     showError('Nos llegaste sin datos de tu solicitud — si ya pagaste, escríbenos con el email que usaste al verificarte y lo activamos a mano.');
     return;
