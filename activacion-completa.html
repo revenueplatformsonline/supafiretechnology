@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuenta creada — SupaFire Technology Online</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<meta name="description" content="Confirmación de pago y creación de cuenta.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #FAFBFC;
+    --bg-alt: #F1F4F8;
+    --bg-card: #FFFFFF;
+    --ink: #0E1420;
+    --ink-soft: #4A5568;
+    --ink-dim: #94A0B2;
+    --blue: #2B6CF6;
+    --purple: #7C3AED;
+    --line: rgba(14,20,32,0.09);
+    --line-strong: rgba(14,20,32,0.16);
+    --success: #0F9D63;
+    --danger: #DC2626;
+    --radius: 16px;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display:flex;
+    flex-direction:column;
+    position: relative;
+    overflow-x:hidden;
+  }
+  h1,h3{ font-family:'Space Grotesk', sans-serif; letter-spacing:-0.02em; line-height:1.15; }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+  a{ color:inherit; text-decoration:none; }
+
+  .grid-bg{
+    position: fixed; inset:0; z-index:0;
+    background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 20%, transparent 75%);
+    opacity:0.6;
+    pointer-events:none;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
+  }
+
+  header{
+    padding: 22px 28px;
+    display:flex; align-items:center; gap:10px;
+    position: relative; z-index:1;
+    border-bottom: 1px solid var(--line);
+    background: rgba(250,251,252,0.85);
+    backdrop-filter: blur(14px);
+  }
+  .logo-dot{
+    width:9px; height:9px; border-radius:50%;
+    background: var(--blue);
+    box-shadow: 0 0 10px 2px rgba(43,108,246,0.5);
+    animation: pulse-dot 2.4s ease-in-out infinite;
+  }
+  .logo-img{ height: 24px; width:auto; display:block; }
+  @keyframes pulse-dot{ 0%,100%{ opacity:1; transform:scale(1);} 50%{ opacity:0.5; transform:scale(0.72);} }
+  header span.brand{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.02rem; color: var(--ink); }
+  header a.back{ margin-left:auto; font-size:0.86rem; color:var(--ink-soft); }
+  header a.back:hover{ color:var(--ink); }
+
+  main{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 50px 20px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .panel{ width: 100%; max-width: 480px; }
+
+  .step-track{
+    display:flex; align-items:center; gap:8px;
+    margin-bottom: 30px;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--ink-dim);
+  }
+  .step-track .seg{ flex:1; height:3px; border-radius:2px; background: linear-gradient(90deg, var(--blue), var(--purple)); }
+
+  .card{
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 38px 34px;
+    box-shadow: 0 20px 50px -25px rgba(14,20,32,0.15);
+  }
+
+  .card h1{ font-size: 1.5rem; margin-bottom: 10px; color: var(--ink); text-align:center; }
+  .card p.sub{ color: var(--ink-soft); font-size: 0.94rem; margin-bottom: 26px; text-align:center; }
+
+  .spinner-wrap{ display:flex; flex-direction:column; align-items:center; gap: 22px; padding: 10px 0; text-align:center; }
+  .spinner{
+    width: 46px; height:46px;
+    border-radius: 50%;
+    border: 3px solid var(--line);
+    border-top-color: var(--blue);
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  .status-line{ font-family:'JetBrains Mono', monospace; font-size: 0.82rem; color: var(--ink-soft); }
+
+  .success-icon, .info-icon, .error-icon{
+    width: 56px; height:56px;
+    border-radius: 50%;
+    display:flex; align-items:center; justify-content:center;
+    margin: 0 auto 22px;
+  }
+  .success-icon{ background: rgba(15,157,99,0.1); border: 1px solid rgba(15,157,99,0.3); color: var(--success); }
+  .info-icon{ background: rgba(43,108,246,0.1); border: 1px solid rgba(43,108,246,0.3); color: var(--blue); }
+  .error-icon{ background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.25); color: var(--danger); }
+
+  .cred-box{
+    background: var(--bg-alt);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 14px 0;
+  }
+  .cred-box .cred-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+  .cred-box .cred-value{
+    font-family:'Space Grotesk', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--ink);
+    word-break: break-word;
+  }
+
+  .warn-box{
+    display:flex; gap:10px; align-items:flex-start;
+    background: rgba(180,83,9,0.06);
+    border: 1px solid rgba(180,83,9,0.22);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 0.84rem;
+    color: #B45309;
+    margin-top: 20px;
+    line-height: 1.5;
+  }
+  .warn-box svg{ flex-shrink:0; margin-top:2px; }
+
+  .next-note{
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    text-align:center;
+  }
+
+  .whatsapp-link{
+    display:inline-block;
+    margin-top: 18px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--blue);
+  }
+  .whatsapp-link:hover{ text-decoration: underline; }
+
+  footer{
+    position: relative; z-index:1;
+    text-align:center;
+    padding: 24px;
+    color: var(--ink-dim);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--line);
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<header>
+  <img src="favicon.png" alt="SupaFire" class="logo-img">
+  <span class="brand">SupaFire Technology Online</span>
+  <a href="index.html" class="back">← Volver al sitio</a>
+</header>
+
+<main>
+  <div class="panel">
+    <div class="step-track">
+      <div class="seg"></div>
+      <div class="seg"></div>
+      <div class="seg"></div>
+    </div>
+
+    <div class="card">
+
+      <!-- STATE: LOADING -->
+      <div id="loadingState">
+        <div class="spinner-wrap">
+          <div class="spinner"></div>
+          <div class="status-line mono" id="statusLine">Confirmando tu pago y creando tu cuenta...</div>
+        </div>
+      </div>
+
+      <!-- STATE: SUCCESS -->
+      <div id="successState" style="display:none;">
+        <div class="success-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h1>¡Tu cuenta ya está creada!</h1>
+        <p class="sub">Guardá estos datos — son tu acceso real al Panel Owner.</p>
+
+        <div class="cred-box">
+          <div class="cred-label">Usuario (email)</div>
+          <div class="cred-value" id="outEmail">—</div>
+        </div>
+        <div class="cred-box">
+          <div class="cred-label">Contraseña</div>
+          <div class="cred-value" id="outPassword">—</div>
+        </div>
+
+        <div class="warn-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.6 1.9 18a1.8 1.8 0 0 0 1.55 2.7h17.1A1.8 1.8 0 0 0 22.1 18L13.7 3.6a1.8 1.8 0 0 0-3.1 0Z"/><path d="M12 9v4"/><path d="M12 16.5h.01"/></svg>
+          <span>Esta contraseña solo se muestra una vez, acá. Si la perdés, contactanos para restablecerla.</span>
+        </div>
+
+        <p class="next-note">Tu cuenta ya existe, pero tu app todavía no está publicada — nuestro equipo se va a contactar con vos para terminar de configurarla (servidor, tiendas, etc.).</p>
+      </div>
+
+      <!-- STATE: ALREADY CREATED -->
+      <div id="alreadyState" style="display:none;">
+        <div class="info-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        </div>
+        <h1>Tu cuenta ya había sido creada</h1>
+        <p class="sub">Esta solicitud ya se procesó antes — si no guardaste tu usuario/contraseña, contactanos y te ayudamos a restablecerlo.</p>
+      </div>
+
+      <!-- STATE: ERROR -->
+      <div id="errorState" style="display:none;">
+        <div class="error-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6"/><path d="M9 9l6 6"/></svg>
+        </div>
+        <h1>No pudimos confirmarlo automáticamente</h1>
+        <p class="sub" id="errorMessage">Contactanos con el email que usaste en tu solicitud y lo revisamos a mano.</p>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<footer>
+  © 2026 SupaFire Technology Online — Revenue Platforms Online
+</footer>
+
+<script>
+(function(){
+  // Nunca llama a Supabase directamente: el proyecto maestro no acepta
+  // updates/creación de usuarios desde el anon key (a propósito, ver la
+  // migración de signup_requests), así que esto pasa por el único
+  // endpoint público que sí puede hacerlo con service role —
+  // api/signup-requests/finalize en Supa Fire Owner.
+  const FINALIZE_URL = "https://supafireowner.vercel.app/api/signup-requests/finalize";
+
+  const loadingState = document.getElementById('loadingState');
+  const successState = document.getElementById('successState');
+  const alreadyState = document.getElementById('alreadyState');
+  const errorState = document.getElementById('errorState');
+
+  function show(el){
+    [loadingState, successState, alreadyState, errorState].forEach(function(s){ s.style.display = s === el ? 'block' : 'none'; });
+  }
+
+  function showError(message){
+    document.getElementById('errorMessage').textContent = message;
+    show(errorState);
+  }
+
+  // Stripe reenvía automáticamente los parámetros utm_* de la URL del
+  // Payment Link hacia la URL de redirección post-pago configurada en el
+  // dashboard — sin webhook ni API key, ver la doc de Stripe sobre
+  // Payment Links. activacion.html metió el id de la solicitud acá antes
+  // de mandar al pago.
+  const requestId = new URLSearchParams(window.location.search).get('utm_content');
+  if(!requestId){
+    showError('Nos llegaste sin datos de tu solicitud — si ya pagaste, escribinos con el email que usaste al verificarte y lo activamos a mano.');
+    return;
+  }
+
+  fetch(FINALIZE_URL + '?id=' + encodeURIComponent(requestId))
+    .then(function(res){ return res.json().then(function(body){ return { ok: res.ok, status: res.status, body: body }; }); })
+    .then(function(result){
+      const body = result.body || {};
+      if(result.ok && body.email){
+        document.getElementById('outEmail').textContent = body.email;
+        document.getElementById('outPassword').textContent = body.password;
+        show(successState);
+      } else if(body.alreadyCreated){
+        show(alreadyState);
+      } else if(result.status === 403 && body.rejected){
+        showError('Tu solicitud fue rechazada al revisar tu documento. Escribinos si creés que es un error.');
+      } else {
+        showError('Tu pago quedó registrado, pero algo falló al crear tu cuenta automáticamente. Escribinos y lo resolvemos a mano. (' + (body.error || 'error desconocido') + ')');
+      }
+    })
+    .catch(function(err){
+      showError('No pudimos conectarnos para confirmar tu cuenta. Escribinos y lo resolvemos a mano. (' + (err && err.message ? err.message : 'error de red') + ')');
+    });
+})();
+</script>
+
+</body>
+</html>

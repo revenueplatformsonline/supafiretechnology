@@ -239,56 +239,6 @@
     min-height: 20px;
   }
 
-  .result-wrap{ display:none; }
-  .result-wrap.show{ display:block; }
-
-  .success-icon{
-    width: 56px; height:56px;
-    border-radius: 50%;
-    background: rgba(15,157,99,0.1);
-    border: 1px solid rgba(15,157,99,0.3);
-    display:flex; align-items:center; justify-content:center;
-    color: var(--success);
-    margin: 0 auto 22px;
-  }
-
-  .code-box{
-    background: var(--bg-alt);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 16px 20px;
-    text-align:center;
-    margin: 14px 0;
-  }
-  .code-box .code-label{
-    font-family:'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    color: var(--ink-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 8px;
-  }
-  .code-box .code-value{
-    font-family:'Space Grotesk', sans-serif;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--ink);
-    word-break: break-word;
-  }
-
-  .warn-box{
-    display:flex; gap:10px; align-items:flex-start;
-    background: rgba(180,83,9,0.06);
-    border: 1px solid rgba(180,83,9,0.22);
-    border-radius: 10px;
-    padding: 14px 16px;
-    font-size: 0.84rem;
-    color: #B45309;
-    margin-top: 20px;
-    line-height: 1.5;
-  }
-  .warn-box svg{ flex-shrink:0; margin-top:2px; }
-
   .error-box{
     display:none;
     gap:10px; align-items:flex-start;
@@ -302,28 +252,6 @@
     line-height: 1.5;
   }
   .error-box.show{ display:flex; }
-
-  .next-steps{
-    margin-top: 26px;
-    padding-top: 22px;
-    border-top: 1px solid var(--line);
-  }
-  .next-steps h3{ font-size: 0.98rem; margin-bottom: 14px; color: var(--ink); }
-  .next-steps ol{
-    padding-left: 20px;
-    display:flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .next-steps li{ font-size: 0.88rem; color: var(--ink-soft); }
-  .next-steps li b{ color: var(--ink); font-weight:600; }
-
-  .thanks-line{
-    text-align:center;
-    color: var(--ink-soft);
-    font-size: 0.9rem;
-    margin-top: 26px;
-  }
 
   footer{
     position: relative; z-index:1;
@@ -357,9 +285,9 @@
 
       <!-- STEP: FORM -->
       <div id="formStep">
-        <div class="eyebrow"><span class="dot"></span>PAGO CONFIRMADO</div>
+        <div class="eyebrow"><span class="dot"></span>ÚLTIMO PASO ANTES DE PAGAR</div>
         <h1>Verifica tu identidad</h1>
-        <p class="sub">Tu pago fue recibido. Completa estos datos y subí una foto de tu documento de identidad — nuestro equipo revisa y aprueba tu cuenta a mano antes de activarla.</p>
+        <p class="sub">Completa estos datos y subí una foto de tu documento de identidad. Apenas lo enviás, te llevamos al pago — y en cuanto termines, tu cuenta se crea sola.</p>
 
         <div class="plan-detected" id="planDetected" style="display:none;">
           <div class="pd-icon">
@@ -415,41 +343,6 @@
         <div class="status-line mono" id="statusLine">Subiendo tu documento...</div>
       </div>
 
-      <!-- STEP: RESULT -->
-      <div class="result-wrap" id="resultStep">
-        <div class="success-icon">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
-        <h1 style="text-align:center;">Solicitud recibida</h1>
-        <p class="sub" style="text-align:center;" id="resultSub">Guardá esta pantalla — te vamos a escribir en cuanto la aprobemos.</p>
-
-        <div class="code-box">
-          <div class="code-label">Marca</div>
-          <div class="code-value" id="outBrand">—</div>
-        </div>
-
-        <div class="code-box">
-          <div class="code-label">Plan solicitado</div>
-          <div class="code-value" id="outPlan">—</div>
-        </div>
-
-        <div class="warn-box">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.6 1.9 18a1.8 1.8 0 0 0 1.55 2.7h17.1A1.8 1.8 0 0 0 22.1 18L13.7 3.6a1.8 1.8 0 0 0-3.1 0Z"/><path d="M12 9v4"/><path d="M12 16.5h.01"/></svg>
-          <span>Tu documento de identidad ya quedó guardado para revisión — no hace falta que lo reenvíes por ningún otro medio.</span>
-        </div>
-
-        <div class="next-steps">
-          <h3>Próximos pasos</h3>
-          <ol>
-            <li>Revisamos tu documento de identidad a mano.</li>
-            <li>Te escribimos a <b id="outEmail">tu email</b> con tu usuario y contraseña del <b>Panel Owner</b>.</li>
-            <li>Iniciás sesión y ya podés empezar a configurar tu app.</li>
-          </ol>
-        </div>
-
-        <p class="thanks-line">Gracias por confiar en nosotros — bienvenido al equipo.</p>
-      </div>
-
     </div>
   </div>
 </main>
@@ -475,7 +368,6 @@
   const form = document.getElementById('activationForm');
   const formStep = document.getElementById('formStep');
   const loadingStep = document.getElementById('loadingStep');
-  const resultStep = document.getElementById('resultStep');
   const statusLine = document.getElementById('statusLine');
   const formError = document.getElementById('formError');
   const seg2 = document.getElementById('seg2');
@@ -487,10 +379,11 @@
   const fdName = document.getElementById('fdName');
   const fdLabel = document.getElementById('fdLabel');
 
-  // ===== Read plan from URL (?plan=start) sent by Stripe's "after payment" redirect =====
-  // Map of short URL codes -> plan names as they exist in supafire_plans —
-  // configure each Stripe Payment Link's redirect URL as:
-  // activacion.html?plan=start (o pro, premium, vip, excelsior, empire)
+  // ===== Read the plan chosen on index.html's "Activar plan" button =====
+  // index.html now links here as activacion.html?plan_id={uuid}&billing=
+  // monthly|annual — the real plan id, not a name to match. The old
+  // ?plan=start short-code map is kept as a fallback only (some link
+  // typed/shared by hand somewhere still using it), matched by name.
   const planMap = {
     start: 'Start',
     pro: 'Pro Advanced',
@@ -499,9 +392,12 @@
     excelsior: 'Excelsior International',
     empire: 'Empire State'
   };
+  const urlParams = new URLSearchParams(window.location.search);
+  const detectedPlanId = urlParams.get('plan_id') || null;
+  const billingMode = urlParams.get('billing') === 'annual' ? 'annual' : 'monthly';
   const detectedPlanName = (function(){
-    const params = new URLSearchParams(window.location.search);
-    const planParam = (params.get('plan') || '').toLowerCase().trim();
+    if (detectedPlanId) return null; // el id manda si está presente
+    const planParam = (urlParams.get('plan') || '').toLowerCase().trim();
     return planParam && planMap[planParam] ? planMap[planParam] : null;
   })();
 
@@ -509,26 +405,33 @@
   // catálogo real que edita Kurt en Contenido → Planes Supa Fire) en vez
   // de una lista fija en el HTML — así nunca queda desincronizado, y el
   // id real que necesita signup_requests.requested_plan_id sale directo
-  // de acá, sin adivinar por nombre.
+  // de acá, sin adivinar por nombre. También trae los links de Stripe de
+  // cada plan — este formulario ya no termina en una pantalla de
+  // confirmación, termina redirigiendo al pago real (ver el submit más
+  // abajo), así que necesita saber a qué URL mandar a la persona.
+  var plansById = {};
   async function loadPlans(){
     try{
       const res = await supafire
         .from('supafire_plans')
-        .select('id, name, max_users')
+        .select('id, name, max_users, stripe_checkout_url, stripe_checkout_url_annual')
         .eq('active', true)
         .order('order_index', { ascending: true });
       if(res.error) throw res.error;
       const plans = res.data || [];
+      plans.forEach(function(p){ plansById[p.id] = p; });
       planSelect.innerHTML = plans.map(function(p){
         return '<option value="' + p.id + '" data-name="' + p.name.replace(/"/g,'&quot;') + '">SupaFire — ' + p.name + ' (' + p.max_users + ' usuarios)</option>';
       }).join('');
-      if(detectedPlanName){
-        const match = plans.find(function(p){ return p.name === detectedPlanName; });
-        if(match){
-          planSelect.value = match.id;
-          pdPlanName.textContent = 'SupaFire — ' + match.name;
-          planDetected.style.display = 'flex';
-        }
+
+      let match = null;
+      if (detectedPlanId) match = plans.find(function(p){ return p.id === detectedPlanId; });
+      else if (detectedPlanName) match = plans.find(function(p){ return p.name === detectedPlanName; });
+
+      if(match){
+        planSelect.value = match.id;
+        pdPlanName.textContent = 'SupaFire — ' + match.name;
+        planDetected.style.display = 'flex';
       }
     }catch(e){
       formError.textContent = 'No pudimos cargar los planes disponibles — recargá la página. (' + e.message + ')';
@@ -583,7 +486,6 @@
     const phone = document.getElementById('phone').value.trim();
     const taxId = document.getElementById('taxId').value.trim();
     const requestedPlanId = planSelect.value;
-    const planLabel = planSelect.options[planSelect.selectedIndex] ? planSelect.options[planSelect.selectedIndex].getAttribute('data-name') : '';
     const file = idDocInput.files[0];
 
     const submitBtn = document.getElementById('submitBtn');
@@ -617,13 +519,18 @@
       .then(function(insertRes){
         if(insertRes.error) throw insertRes.error;
 
-        loadingStep.classList.remove('show');
-        resultStep.classList.add('show');
-        document.getElementById('outBrand').textContent = appName;
-        document.getElementById('outPlan').textContent = planLabel || '—';
-        document.getElementById('outEmail').textContent = email;
-        document.getElementById('resultSub').textContent =
-          ownerName.split(' ')[0] + ', recibimos tu solicitud del plan ' + (planLabel || 'elegido') + '. Guardá esta pantalla.';
+        const plan = plansById[requestedPlanId];
+        const checkoutUrl = plan ? (billingMode === 'annual' ? plan.stripe_checkout_url_annual : plan.stripe_checkout_url) : null;
+        if (!checkoutUrl) {
+          // Tu solicitud ya quedó guardada — este es solo el link de pago
+          // el que falta cargar para este plan/modalidad, así que no hay
+          // nada que reintentar del lado del visitante.
+          throw new Error('Tu solicitud quedó guardada, pero todavía no tenemos el link de pago cargado para ese plan. Contactanos para completar el pago manualmente.');
+        }
+
+        statusLine.textContent = 'Redirigiendo al pago...';
+        const sep = checkoutUrl.indexOf('?') === -1 ? '?' : '&';
+        window.location.href = checkoutUrl + sep + 'utm_content=' + encodeURIComponent(requestId);
       })
       .catch(function(err){
         loadingStep.classList.remove('show');
