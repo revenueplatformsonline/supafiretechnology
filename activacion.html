@@ -891,8 +891,21 @@
         }
 
         statusLine.textContent = 'Redirigiendo al pago...';
-        const sep = checkoutUrl.indexOf('?') === -1 ? '?' : '&';
-        window.location.href = checkoutUrl + sep + 'utm_content=' + encodeURIComponent(requestId);
+        // El link de Stripe guardado en el catálogo de planes puede traer
+        // de antes su propio "?utm_content=..." (quedó pegado así al
+        // copiarlo desde Stripe, o de una prueba vieja) — simplemente
+        // concatenar el nuestro al final producía una URL con utm_content
+        // DUPLICADO, y Stripe reenvía ambos valores al volver del pago.
+        // URLSearchParams.get() en activacion-completa.html se queda con
+        // el PRIMERO, que termina siendo ese id viejo en vez del de esta
+        // solicitud — por eso aparecía "ya había sido creada" con datos
+        // de otra cuenta. Usar la API de URL para borrar cualquier
+        // utm_content preexistente antes de fijar el nuestro garantiza
+        // que solo quede uno, y que sea el correcto.
+        const checkoutUrlObj = new URL(checkoutUrl, window.location.href);
+        checkoutUrlObj.searchParams.delete('utm_content');
+        checkoutUrlObj.searchParams.set('utm_content', requestId);
+        window.location.href = checkoutUrlObj.toString();
       })
       .catch(function(err){
         loadingStep.classList.remove('show');
