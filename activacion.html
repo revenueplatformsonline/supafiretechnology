@@ -389,8 +389,8 @@
 
       <!-- STEP: APP DETAILS -->
       <div id="appDetailsStep">
-        <div class="eyebrow"><span class="dot"></span>CONTANOS SOBRE TU APP</div>
-        <h1>Antes de seguir, contanos un poco más</h1>
+        <div class="eyebrow"><span class="dot"></span>CUÉNTANOS SOBRE TU APP</div>
+        <h1>Antes de seguir, cuéntanos un poco más</h1>
         <p class="sub">Esto nos ayuda a preparar tu app desde el primer día. Después de esto viene la verificación de identidad.</p>
 
         <div class="plan-detected" id="planDetected" style="display:none;">
@@ -417,9 +417,9 @@
 
           <label for="targetAudience">¿A quién le vas a vender? (público objetivo)</label>
           <input type="text" id="targetAudience" placeholder="Ej. Adultos de 25 a 45 años que entrenan en casa" autocomplete="off">
-          <div class="field-error" id="err-targetAudience">Contanos brevemente a quién le vas a vender.</div>
+          <div class="field-error" id="err-targetAudience">Cuéntanos brevemente a quién le vas a vender.</div>
 
-          <label for="expectedUsers">¿Cuántos usuarios esperás en los primeros 3 meses?</label>
+          <label for="expectedUsers">¿Cuántos usuarios esperas en los primeros 3 meses?</label>
           <select id="expectedUsers">
             <option value="menos-20">Menos de 20</option>
             <option value="20-50">Entre 20 y 50</option>
@@ -428,7 +428,7 @@
             <option value="mas-300">Más de 300</option>
           </select>
 
-          <label for="hasPhysicalGym">¿Ya tenés un gimnasio o negocio físico?</label>
+          <label for="hasPhysicalGym">¿Ya tienes un gimnasio o negocio físico?</label>
           <select id="hasPhysicalGym">
             <option value="no">No, solo la app</option>
             <option value="si">Sí, tengo local físico</option>
@@ -444,10 +444,10 @@
           <label for="brandColor">Color principal de tu marca</label>
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
             <input type="color" id="brandColor" value="#4F46E5" style="height:42px;width:60px;border-radius:8px;border:1px solid var(--line-strong);cursor:pointer;background:var(--bg-alt);">
-            <span style="font-size:0.84rem;color:var(--ink-dim);">Lo podés cambiar después</span>
+            <span style="font-size:0.84rem;color:var(--ink-dim);">Lo puedes cambiar después</span>
           </div>
 
-          <label for="hasLogo">¿Ya tenés un logo?</label>
+          <label for="hasLogo">¿Ya tienes un logo?</label>
           <select id="hasLogo">
             <option value="no">No todavía</option>
             <option value="si">Sí, ya tengo</option>
@@ -476,7 +476,7 @@
           </select>
 
           <label for="comments">¿Algo más que quieras que tenga tu app? <span style="font-weight:400;color:var(--ink-dim)">(opcional)</span></label>
-          <textarea id="comments" placeholder="Contanos cualquier idea que tengas en mente..."></textarea>
+          <textarea id="comments" placeholder="Cuéntanos cualquier idea que tengas en mente..."></textarea>
 
           <button type="submit" class="btn-primary" id="appDetailsSubmitBtn">Siguiente</button>
         </form>
@@ -486,7 +486,7 @@
       <div id="formStep" style="display:none;">
         <div class="eyebrow"><span class="dot"></span>ÚLTIMO PASO ANTES DE PAGAR</div>
         <h1>Verifica tu identidad</h1>
-        <p class="sub">Completa estos datos y subí una foto de tu documento de identidad. Apenas lo enviás, te llevamos al pago — y en cuanto termines, tu cuenta se crea sola.</p>
+        <p class="sub">Completa estos datos y sube una foto de tu documento de identidad. Apenas lo envíes, te llevamos al pago — y en cuanto termines, tu cuenta se crea sola.</p>
 
         <div class="error-box" id="formError"></div>
 
@@ -517,7 +517,7 @@
           <div class="id-doc-options">
             <label class="file-drop" for="idDocInput">
               <input type="file" id="idDocInput" accept="image/*,.pdf">
-              <div class="fd-label" id="fdLabel">Tocá para subir una foto o PDF</div>
+              <div class="fd-label" id="fdLabel">Toca para subir una foto o PDF</div>
               <div class="fd-name" id="fdName"></div>
             </label>
             <button type="button" class="btn-camera" id="openCameraBtn">
@@ -526,7 +526,7 @@
             </button>
           </div>
           <div class="file-hint">Solo la revisa nuestro equipo para verificar tu identidad — el archivo no es público.</div>
-          <div class="field-error" id="err-idDoc">Subí o tomá una foto de tu documento para continuar.</div>
+          <div class="field-error" id="err-idDoc">Sube o toma una foto de tu documento para continuar.</div>
 
           <button type="submit" class="btn-primary" id="submitBtn">Enviar para verificación</button>
           <button type="button" class="btn-secondary" id="backToAppDetailsBtn">← Volver</button>
@@ -669,7 +669,7 @@
         planDetected.style.display = 'flex';
       }
     }catch(e){
-      formError.textContent = 'No pudimos cargar los planes disponibles — recargá la página. (' + e.message + ')';
+      formError.textContent = 'No pudimos cargar los planes disponibles — recarga la página. (' + e.message + ')';
       formError.classList.add('show');
     }
   }
@@ -754,9 +754,9 @@
     try{
       cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
       cameraVideo.srcObject = cameraStream;
-      cameraStatus.textContent = 'Encuadrá tu documento y capturá.';
+      cameraStatus.textContent = 'Encuadra tu documento y captura.';
     }catch(e){
-      cameraStatus.textContent = 'No pudimos acceder a la cámara (' + (e && e.message ? e.message : 'permiso denegado') + '). Usá "subir archivo" en su lugar.';
+      cameraStatus.textContent = 'No pudimos acceder a la cámara (' + (e && e.message ? e.message : 'permiso denegado') + '). Usa "subir archivo" en su lugar.';
     }
   }
 
@@ -782,7 +782,7 @@
 
   camRetakeBtn.addEventListener('click', function(){
     resetCameraModalToLive();
-    cameraStatus.textContent = 'Encuadrá tu documento y capturá.';
+    cameraStatus.textContent = 'Encuadra tu documento y captura.';
   });
 
   camUseBtn.addEventListener('click', function(){
@@ -817,7 +817,7 @@
     if(phone.length === 0) ok = false;
     if(!file) ok = false;
     if(file && file.size > MAX_FILE_BYTES){
-      document.getElementById('err-idDoc').textContent = 'El archivo es muy pesado (máx. 15MB) — probá con una foto más liviana.';
+      document.getElementById('err-idDoc').textContent = 'El archivo es muy pesado (máx. 15MB) — prueba con una foto más liviana.';
       document.getElementById('err-idDoc').classList.add('show');
       ok = false;
     }
@@ -875,7 +875,7 @@
           // Tu solicitud ya quedó guardada — este es solo el link de pago
           // el que falta cargar para este plan/modalidad, así que no hay
           // nada que reintentar del lado del visitante.
-          throw new Error('Tu solicitud quedó guardada, pero todavía no tenemos el link de pago cargado para ese plan. Contactanos para completar el pago manualmente.');
+          throw new Error('Tu solicitud quedó guardada, pero todavía no tenemos el link de pago cargado para ese plan. Contáctanos para completar el pago manualmente.');
         }
 
         statusLine.textContent = 'Redirigiendo al pago...';
@@ -889,7 +889,7 @@
         seg3.classList.remove('done');
         seg4.classList.remove('active');
         submitBtn.disabled = false;
-        formError.textContent = 'No pudimos enviar tu solicitud — probá de nuevo en unos segundos. (' + (err && err.message ? err.message : 'error desconocido') + ')';
+        formError.textContent = 'No pudimos enviar tu solicitud — prueba de nuevo en unos segundos. (' + (err && err.message ? err.message : 'error desconocido') + ')';
         formError.classList.add('show');
       });
   });
