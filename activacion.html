@@ -850,7 +850,19 @@
     const ext = (file.name.split('.').pop() || 'bin').toLowerCase().replace(/[^a-z0-9]/g, '') || 'bin';
     const docPath = requestId + '/documento.' + ext;
 
-    supafire.storage.from('signup-documents').upload(docPath, file, { contentType: file.type || undefined })
+    // Esta página es el formulario público de un visitante anónimo — pero
+    // si el mismo navegador ya pasó antes por activacion-completa.html
+    // (que hace un auto-login para dejarlo listo para "Ir a mi Panel"),
+    // supabase-js persiste esa sesión en localStorage y la reusa acá sin
+    // avisar. Con sesión de un client_member real, este insert deja de
+    // calificar para la policy "anon can create signup_requests" (solo
+    // aplica al rol anon) y ninguna otra policy le da permiso de insertar,
+    // así que Postgres lo rechaza con "new row violates row-level security
+    // policy". Forzar el signOut acá garantiza que esta solicitud nueva
+    // siempre se mande como anon, sin importar qué haya en el navegador.
+    supafire.auth.signOut().then(function(){
+      return supafire.storage.from('signup-documents').upload(docPath, file, { contentType: file.type || undefined });
+    })
       .then(function(uploadRes){
         if(uploadRes.error) throw uploadRes.error;
         statusLine.textContent = 'Guardando tu solicitud...';
