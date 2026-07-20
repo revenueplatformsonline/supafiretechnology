@@ -172,6 +172,23 @@
     text-align:center;
   }
 
+  .btn-primary{
+    display:block;
+    width:100%;
+    padding: 14px;
+    border-radius: 10px;
+    background: linear-gradient(100deg, var(--blue), var(--purple));
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.96rem;
+    border: none;
+    cursor: pointer;
+    text-align:center;
+    margin-top: 22px;
+    text-decoration:none;
+  }
+  .btn-primary:hover{ opacity:0.92; }
+
   .whatsapp-link{
     display:inline-block;
     margin-top: 18px;
@@ -241,7 +258,8 @@
           <span>Esta contraseña solo se muestra una vez, acá. Si la perdés, contactanos para restablecerla.</span>
         </div>
 
-        <p class="next-note">Tu cuenta ya existe, pero tu app todavía no está publicada — nuestro equipo se va a contactar con vos para terminar de configurarla (servidor, tiendas, etc.).</p>
+        <a href="panel-cliente.html" class="btn-primary" id="goToPanelBtn">Ir a mi Panel →</a>
+        <p class="next-note">Ahí vas a ver el estado de tu verificación de identidad y, apenas la confirmemos, tu código de activación.</p>
       </div>
 
       <!-- STATE: ALREADY CREATED -->
@@ -270,14 +288,20 @@
   © 2026 SupaFire Technology Online — Revenue Platforms Online
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function(){
-  // Nunca llama a Supabase directamente: el proyecto maestro no acepta
-  // updates/creación de usuarios desde el anon key (a propósito, ver la
-  // migración de signup_requests), así que esto pasa por el único
-  // endpoint público que sí puede hacerlo con service role —
-  // api/signup-requests/finalize en Supa Fire Owner.
+  // La CREACIÓN de la cuenta nunca llama a Supabase directamente: el
+  // proyecto maestro no acepta updates/creación de usuarios desde el anon
+  // key (a propósito, ver la migración de signup_requests), así que eso
+  // pasa por el único endpoint público que sí puede hacerlo con service
+  // role — api/signup-requests/finalize en Supa Fire Owner. El auto-login
+  // de más abajo es distinto: signInWithPassword() es autenticación en
+  // sí misma, no una escritura que dependa de esa restricción.
   const FINALIZE_URL = "https://supafireowner.vercel.app/api/signup-requests/finalize";
+  const SUPAFIRE_URL = "https://fnmbewrluzajfcvbopaa.supabase.co";
+  const SUPAFIRE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZubWJld3JsdXphamZjdmJvcGFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNzMxODYsImV4cCI6MjA5ODc0OTE4Nn0.Cbf55ftXjgd8OvQEJ95fkjVXbxwyBJrJ3_kQ3j-kYts";
+  const supafire = window.supabase.createClient(SUPAFIRE_URL, SUPAFIRE_ANON_KEY);
 
   const loadingState = document.getElementById('loadingState');
   const successState = document.getElementById('successState');
@@ -312,6 +336,12 @@
         document.getElementById('outEmail').textContent = body.email;
         document.getElementById('outPassword').textContent = body.password;
         show(successState);
+        // Deja la sesión activa en este navegador (supabase-js la persiste
+        // sola en localStorage) para que el botón "Ir a mi Panel" entre
+        // directo, sin pedirle a la persona que vuelva a escribir lo que
+        // recién le mostramos arriba. Si falla (raro), el botón igual
+        // funciona — panel-cliente.html cae al formulario de login normal.
+        supafire.auth.signInWithPassword({ email: body.email, password: body.password }).catch(function(){});
       } else if(body.alreadyCreated){
         show(alreadyState);
       } else if(result.status === 403 && body.rejected){
