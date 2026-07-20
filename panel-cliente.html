@@ -537,16 +537,26 @@
     doc.setFontSize(10.5);
     doc.setTextColor(60, 60, 60);
     const coverLines = [
-      ['Cliente', currentClientName],
-      ['Proveedor', 'Revenue Platforms Online — Supa Fire Technology Online'],
-      ['Referencia del documento', docRef],
-      ['Fecha de emisión', today],
+      ['Cliente:', currentClientName],
+      ['Proveedor:', 'Revenue Platforms Online — Supa Fire Technology Online'],
+      ['Referencia del documento:', docRef],
+      ['Fecha de emisión:', today],
     ];
+    // Las etiquetas tienen largos muy distintos ("Cliente:" vs.
+    // "Referencia del documento:") — un offset fijo entre etiqueta y
+    // valor hacía que las etiquetas largas se superpusieran con su
+    // propio valor. Se mide el ancho real de la más larga (en negrita,
+    // que es más ancha que la versión normal) y se usa esa medida más un
+    // margen para calcular dónde empieza la columna de valores.
+    const coverLabelX = pageWidth / 2 - 170;
+    doc.setFont('helvetica', 'bold');
+    const coverLabelWidth = Math.max.apply(null, coverLines.map(function(row){ return doc.getTextWidth(row[0]); }));
+    const coverValueX = coverLabelX + coverLabelWidth + 14;
     coverLines.forEach(function(row){
       doc.setFont('helvetica', 'bold');
-      doc.text(row[0] + ':', pageWidth / 2 - 140, y);
+      doc.text(row[0], coverLabelX, y);
       doc.setFont('helvetica', 'normal');
-      doc.text(row[1], pageWidth / 2 - 30, y);
+      doc.text(row[1], coverValueX, y);
       y += 22;
     });
 
