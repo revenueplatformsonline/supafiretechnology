@@ -105,29 +105,81 @@
   .plan-line{ font-size:0.9rem; color: var(--ink-soft); }
   .plan-line b{ color: var(--ink); }
 
-  /* ===== Consolas simuladas (estilo Supabase de index.html) ===== */
-  .console-card{
-    background: var(--dark); border-radius: 16px; padding: 18px; box-shadow: 0 24px 50px -22px rgba(14,20,32,0.35);
-    margin-bottom: 20px;
+  .doc-btn{
+    display:flex; align-items:center; gap:9px; margin-top:16px; padding:12px 16px; width:100%;
+    border-radius:10px; border:1px solid var(--line-strong); background:var(--bg-alt); color:var(--ink);
+    font-family:'Inter',sans-serif; font-size:0.86rem; font-weight:600; cursor:pointer; text-align:left;
   }
-  .console-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-  .console-top .ct-title{ font-family:'JetBrains Mono', monospace; font-size:0.7rem; color:#8B95A7; }
+  .doc-btn:hover{ border-color:var(--blue); color:var(--blue); }
+  .doc-btn svg{ flex-shrink:0; }
+
+  .section-label{
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:0.94rem; color:var(--ink);
+    margin: 32px 0 14px;
+  }
+  .section-label:first-of-type{ margin-top: 8px; }
+
+  /* ===== Tarjetas de estado de infraestructura ===== */
+  .stats-grid{
+    display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px;
+  }
+  .stat-card{
+    background: var(--dark); border-radius: 14px; padding: 16px 18px; box-shadow: 0 18px 40px -24px rgba(14,20,32,0.35);
+  }
+  .stat-card .sc-top{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .stat-card .sc-icon{ color:#8B95A7; flex-shrink:0; }
+  .stat-card .sc-name{ font-family:'JetBrains Mono', monospace; font-size:0.74rem; color:#B8C2D6; }
+  .stat-card .sc-metric{ font-family:'Space Grotesk',sans-serif; font-size:1.3rem; font-weight:700; color:#fff; }
+  .stat-card .sc-sub{ font-family:'JetBrains Mono', monospace; font-size:0.68rem; color: var(--success-bright); margin-top:4px; display:flex; align-items:center; gap:6px; }
+
+  /* ===== Consolas simuladas (estilo Supabase de index.html), a mayor escala ===== */
+  .console-card{
+    background: var(--dark); border-radius: 16px; padding: 0; box-shadow: 0 24px 50px -22px rgba(14,20,32,0.35);
+    margin-bottom: 20px; overflow:hidden; border: 1px solid rgba(255,255,255,0.06);
+  }
+  .console-top{
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);
+  }
+  .console-top .term-dots{ display:flex; gap:6px; margin-right: 12px; }
+  .console-top .term-dots span{ width:9px; height:9px; border-radius:50%; display:inline-block; }
+  .console-top .term-dots span:nth-child(1){ background:#FF5F57; }
+  .console-top .term-dots span:nth-child(2){ background:#FEBC2E; }
+  .console-top .term-dots span:nth-child(3){ background:#28C840; }
+  .console-top .ct-left{ display:flex; align-items:center; }
+  .console-top .ct-title{ font-family:'JetBrains Mono', monospace; font-size:0.74rem; color:#8B95A7; }
   .live-dot{ display:inline-flex; align-items:center; gap:6px; font-family:'JetBrains Mono', monospace; font-size:0.68rem; color: var(--success-bright); }
   .live-dot .dot{ width:6px; height:6px; border-radius:50%; background:var(--success-bright); box-shadow:0 0 6px 1px var(--success-bright); animation: pulse-dot 2s ease-in-out infinite; }
   @keyframes pulse-dot{ 0%,100%{opacity:1;} 50%{opacity:0.4;} }
   .console-log{
-    font-family:'JetBrains Mono', monospace; font-size:0.76rem; line-height:1.9; color:#B8C2D6;
-    height: 150px; overflow:hidden; display:flex; flex-direction:column-reverse;
+    font-family:'JetBrains Mono', monospace; font-size:0.82rem; line-height:2; color:#B8C2D6;
+    height: 260px; overflow:hidden; display:flex; flex-direction:column-reverse;
+    padding: 18px 20px;
   }
   .console-log div{ opacity:0; animation: log-in 0.4s ease forwards; }
   @keyframes log-in{ from{ opacity:0; transform:translateY(4px);} to{ opacity:1; transform:translateY(0);} }
   .console-log .ok{ color: var(--success-bright); }
+  .console-log .tag{ color:#6B7690; }
 
   .sql-box{
-    font-family:'JetBrains Mono', monospace; font-size:0.8rem; color:#D7DEEC; line-height:1.7; min-height: 70px;
+    font-family:'JetBrains Mono', monospace; font-size:0.86rem; color:#D7DEEC; line-height:1.9; min-height: 150px;
+    padding: 18px 20px;
   }
-  .sql-box .cursor{ display:inline-block; width:7px; height:14px; background:#D7DEEC; vertical-align:middle; animation: blink 1s step-end infinite; }
+  .sql-box .cursor{ display:inline-block; width:7px; height:15px; background:#D7DEEC; vertical-align:middle; animation: blink 1s step-end infinite; }
   @keyframes blink{ 50%{ opacity:0; } }
+
+  /* ===== Distribución en tiendas (App Store / Google Play, simulado) ===== */
+  .store-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-bottom: 20px; }
+  .store-card{
+    background: var(--bg-card); border:1px solid var(--line); border-radius: 14px; padding: 18px 20px;
+    box-shadow: 0 20px 50px -30px rgba(14,20,32,0.15);
+  }
+  .store-card .st-top{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .store-card .st-icon{ width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#fff; }
+  .store-card .st-icon.appstore{ background:#0E1420; }
+  .store-card .st-icon.googleplay{ background: linear-gradient(135deg, var(--blue), var(--purple)); }
+  .store-card .st-name{ font-weight:600; font-size:0.92rem; }
+  .store-card .st-sync{ font-family:'JetBrains Mono', monospace; font-size:0.72rem; color:var(--ink-dim); margin-top:2px; }
 
   .next-note{
     font-size:0.86rem; color:var(--ink-soft); text-align:center; margin-top: 8px;
@@ -148,8 +200,8 @@
   <!-- LOGIN -->
   <div class="login-wrap" id="loginWrap">
     <div class="card">
-      <h2>Ingresá a tu Panel</h2>
-      <p class="hint">Usá el mismo usuario y contraseña que te mostramos al crear tu cuenta.</p>
+      <h2>Ingresa a tu Panel</h2>
+      <p class="hint">Usa el mismo usuario y contraseña que te mostramos al crear tu cuenta.</p>
       <div class="error-box" id="loginError"></div>
       <form id="loginForm" novalidate>
         <label for="loginEmail">Email</label>
@@ -158,7 +210,6 @@
         <input type="password" id="loginPassword" autocomplete="current-password">
         <button type="submit" class="btn-primary" id="loginBtn">Ingresar</button>
       </form>
-      <p class="next-note" style="margin-top:16px;text-align:center;">¿Perdiste tu contraseña? Escribinos y te ayudamos a restablecerla.</p>
     </div>
   </div>
 
@@ -183,13 +234,41 @@
         <button class="copy-btn" id="copyCodeBtn">Copiar</button>
       </div>
       <p class="next-note" id="codeInstructions" style="display:none;">
-        Pegá este código en la sección de activación de tu propio Panel Owner para conectar tu app.
+        Pega este código en la sección de activación de tu propio Panel Owner para conectar tu app.
       </p>
+
+      <button class="doc-btn" id="downloadContractBtn" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+        Descargar contrato de confidencialidad (PDF)
+      </button>
+    </div>
+
+    <h3 class="section-label">Infraestructura</h3>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="sc-top"><svg class="sc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="8" rx="2"/><rect x="2" y="13" width="20" height="8" rx="2"/><line x1="6" y1="7" x2="6.01" y2="7"/><line x1="6" y1="17" x2="6.01" y2="17"/></svg><span class="sc-name">Servidor VPS</span></div>
+        <div class="sc-metric" id="statUptime">99.9%</div>
+        <div class="sc-sub"><span class="dot" style="width:5px;height:5px;border-radius:50%;background:currentColor;"></span>Uptime — operativo</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-top"><svg class="sc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg><span class="sc-name">Base de datos Supabase</span></div>
+        <div class="sc-metric" id="statLatency">18ms</div>
+        <div class="sc-sub"><span class="dot" style="width:5px;height:5px;border-radius:50%;background:currentColor;"></span>Latencia — operativo</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-top"><svg class="sc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg><span class="sc-name">Firebase</span></div>
+        <div class="sc-metric" id="statRequests">0</div>
+        <div class="sc-sub"><span class="dot" style="width:5px;height:5px;border-radius:50%;background:currentColor;"></span>Solicitudes/min — operativo</div>
+      </div>
     </div>
 
     <div class="console-card">
       <div class="console-top">
-        <span class="ct-title">supafire / infraestructura</span>
+        <div class="ct-left">
+          <span class="term-dots"><span></span><span></span><span></span></span>
+          <span class="ct-title">supafire / infraestructura</span>
+        </div>
         <span class="live-dot"><span class="dot"></span>LIVE</span>
       </div>
       <div class="console-log" id="infraLog"></div>
@@ -197,17 +276,46 @@
 
     <div class="console-card">
       <div class="console-top">
-        <span class="ct-title">supafire / consola</span>
+        <div class="ct-left">
+          <span class="term-dots"><span></span><span></span><span></span></span>
+          <span class="ct-title">supafire / consola sql</span>
+        </div>
       </div>
       <div class="sql-box" id="sqlBox"></div>
     </div>
 
-    <p class="next-note">Tu app todavía no está publicada — esto pasa después de la verificación, y nuestro equipo se contacta con vos para terminar de configurarla.</p>
+    <h3 class="section-label">Distribución en tiendas</h3>
+
+    <div class="store-grid">
+      <div class="store-card">
+        <div class="st-top">
+          <span class="st-icon appstore"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.744.9-1.99 1.57-2.987 1.57-.12 0-.24-.02-.31-.03-.014-.1-.04-.4-.04-.7 0-1.1.55-2.2 1.19-2.9.75-.9 2.02-1.57 3.06-1.6.02.13.03.28.03.4.02.06.02.12.02.18zm4.29 16.5c-.28.65-.61 1.25-1 1.8-.53.75-.97 1.27-1.31 1.55-.53.47-1.1.71-1.71.72-.44 0-.97-.13-1.58-.39-.61-.26-1.17-.39-1.68-.39-.53 0-1.11.13-1.74.39-.63.26-1.14.4-1.53.41-.58.02-1.16-.23-1.74-.75-.37-.32-.83-.86-1.38-1.63-.6-.83-1.09-1.79-1.48-2.89-.42-1.19-.63-2.34-.63-3.46 0-1.28.28-2.38.83-3.31.44-.75 1.02-1.34 1.75-1.77s1.52-.66 2.36-.67c.47 0 1.08.15 1.85.44.76.29 1.25.44 1.47.44.16 0 .71-.17 1.63-.51.87-.31 1.6-.44 2.2-.39 1.63.13 2.85.77 3.67 1.94-1.46.89-2.18 2.13-2.17 3.73.01 1.24.46 2.28 1.35 3.1.4.38.85.68 1.34.89-.11.31-.22.61-.35.9z"/></svg></span>
+          <div>
+            <div class="st-name">App Store</div>
+            <div class="st-sync"><span id="appStoreSync">Sincronizado hace 2 min</span></div>
+          </div>
+        </div>
+        <span class="live-dot"><span class="dot"></span>CONECTADO</span>
+      </div>
+      <div class="store-card">
+        <div class="st-top">
+          <span class="st-icon googleplay"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3.6 2.3c-.4.3-.6.8-.6 1.4v16.6c0 .6.2 1.1.6 1.4l.1.1L13 12.7v-.2L3.7 2.2l-.1.1z"/><path d="M16.1 15.8 13 12.7v-1.4l3.1-3.1 6.9 3.9c1 .6 1 1.5 0 2.1z" opacity="0.85"/><path d="M13 11.3l3.1-3.1L3.7 2.3c-.3-.2-.7-.2-1 0z" opacity="0.7"/><path d="M13 12.7 3.7 21.7c.3.2.7.2 1 0l12.4-6.9z" opacity="0.7"/></svg></span>
+          <div>
+            <div class="st-name">Google Play</div>
+            <div class="st-sync"><span id="googlePlaySync">Sincronizado hace 2 min</span></div>
+          </div>
+        </div>
+        <span class="live-dot"><span class="dot"></span>CONECTADO</span>
+      </div>
+    </div>
+
+    <p class="next-note">Tu app todavía no está publicada — esto pasa después de la verificación, y nuestro equipo se contacta contigo para terminar de configurarla.</p>
   </div>
 
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 (function(){
   const SUPAFIRE_URL = "https://fnmbewrluzajfcvbopaa.supabase.co";
@@ -221,6 +329,8 @@
   const loginBtn = document.getElementById('loginBtn');
   const clientNameLabel = document.getElementById('clientNameLabel');
   const logoutBtn = document.getElementById('logoutBtn');
+  let currentClientName = '';
+  let simsStarted = false;
 
   function showLogin(message){
     loginWrap.style.display = 'block';
@@ -246,7 +356,7 @@
       .eq('auth_user_id', user.id)
       .maybeSingle();
     if(memberError || !membership){
-      showLogin('No encontramos tu cuenta de cliente — contactanos si creés que es un error.');
+      showLogin('No encontramos tu cuenta de cliente — contáctanos si crees que es un error.');
       return;
     }
 
@@ -256,7 +366,7 @@
       .eq('id', membership.client_id)
       .single();
     if(clientError || !client){
-      showLogin('No pudimos cargar tu panel — contactanos si el problema persiste.');
+      showLogin('No pudimos cargar tu panel — contáctanos si el problema persiste.');
       return;
     }
 
@@ -265,6 +375,7 @@
     clientNameLabel.style.display = 'inline';
     clientNameLabel.textContent = client.name;
     logoutBtn.style.display = 'inline';
+    currentClientName = client.name;
 
     document.getElementById('planName').textContent = client.supafire_plans ? client.supafire_plans.name : '—';
 
@@ -277,20 +388,25 @@
     if(client.id_verified && client.activation_code){
       verifyPill.className = 'status-pill verified';
       verifyPillText.textContent = 'Verificado';
-      verifySub.textContent = 'Ya revisamos tu documento de identidad — acá tenés tu código.';
+      verifySub.textContent = 'Ya revisamos tu documento de identidad — acá tienes tu código.';
       document.getElementById('codeValue').textContent = client.activation_code;
       codeBox.style.display = 'flex';
       codeInstructions.style.display = 'block';
     } else {
       verifyPill.className = 'status-pill pending';
       verifyPillText.textContent = 'En revisión';
-      verifySub.textContent = 'Estamos revisando tu documento de identidad — volvé a entrar más tarde para ver tu código.';
+      verifySub.textContent = 'Estamos revisando tu documento de identidad — vuelve a entrar más tarde para ver tu código.';
       codeBox.style.display = 'none';
       codeInstructions.style.display = 'none';
     }
 
-    startInfraLog();
-    startSqlSim();
+    if(!simsStarted){
+      simsStarted = true;
+      startInfraLog();
+      startSqlSim();
+      startInfraStats();
+      startStoreSync();
+    }
   }
 
   loginForm.addEventListener('submit', function(e){
@@ -306,7 +422,7 @@
         return loadDashboard();
       })
       .catch(function(err){
-        loginError.textContent = 'No pudimos ingresar — revisá tu email y contraseña. (' + (err && err.message ? err.message : 'error') + ')';
+        loginError.textContent = 'No pudimos ingresar — revisa tu email y contraseña. (' + (err && err.message ? err.message : 'error') + ')';
         loginError.classList.add('show');
       })
       .finally(function(){
@@ -328,6 +444,82 @@
       setTimeout(function(){ btn.textContent = original; }, 1800);
     });
   });
+
+  // Contrato generado en el navegador (jsPDF, sin backend) — mismo texto
+  // para todos los clientes, solo cambia el nombre de marca y la fecha de
+  // emisión. Sin firma: es una constancia informativa del acuerdo de
+  // servicio ya vigente, no un documento que requiera trámite legal aparte.
+  const CONTRACT_SECTIONS = [
+    ['1. OBJETO',
+      'El Proveedor entrega al Cliente infraestructura tecnológica dedicada — servidor privado virtual (VPS), base de datos Supabase, servicios Firebase y gestión de publicación en App Store y Google Play — para operar una aplicación móvil de membresías bajo la marca propia del Cliente.'],
+    ['2. INFORMACIÓN CONFIDENCIAL',
+      'Se considera información confidencial, sin limitarse a: credenciales de acceso a servidores, bases de datos y paneles de administración; datos personales de los usuarios finales del Cliente; información de pagos y facturación; configuración técnica de la infraestructura; y cualquier dato comercial compartido entre las partes durante la prestación del servicio.'],
+    ['3. OBLIGACIONES DEL PROVEEDOR',
+      'El Proveedor se compromete a no divulgar ni compartir con terceros no autorizados la información confidencial del Cliente; a mantener medidas de seguridad razonables sobre los servidores y bases de datos que alojan su información (cifrado en tránsito, respaldo periódico, control de accesos); y a notificarle ante cualquier incidente de seguridad que pudiera comprometer sus datos.'],
+    ['4. OBLIGACIONES DEL CLIENTE',
+      'El Cliente se compromete a resguardar sus propias credenciales de acceso al Panel Owner sin compartirlas con personas ajenas a su organización; a utilizar la infraestructura entregada exclusivamente para los fines de su aplicación; y a no intentar acceder a infraestructura, datos o paneles de otros clientes del Proveedor.'],
+    ['5. PROPIEDAD DE LA INFORMACIÓN',
+      'Los datos generados por la aplicación del Cliente (usuarios, membresías, pagos, contenido) son propiedad exclusiva del Cliente. El Proveedor actúa únicamente como operador técnico de la infraestructura sobre la que dichos datos se almacenan.'],
+    ['6. USO DE LA INFORMACIÓN',
+      'El Proveedor no venderá, cederá ni utilizará la información del Cliente con fines distintos a la prestación del servicio contratado, salvo requerimiento legal expreso de autoridad competente.'],
+    ['7. VIGENCIA',
+      'Este acuerdo permanece vigente mientras el Cliente mantenga un plan activo con el Proveedor. Las obligaciones de confidencialidad descritas sobreviven a la finalización del servicio respecto de la información ya intercambiada entre las partes.'],
+    ['8. GENERACIÓN AUTOMÁTICA',
+      'Este documento fue generado automáticamente desde el Panel de Cliente de Supa Fire Technology Online y constituye una constancia informativa del acuerdo de confidencialidad y seguridad ya vigente entre las partes por la prestación del servicio contratado. No requiere firma para su validez como tal.']
+  ];
+
+  function downloadContractPdf(){
+    if(!window.jspdf || !currentClientName) return;
+    const doc = new window.jspdf.jsPDF({ unit: 'pt', format: 'a4' });
+    const marginX = 56;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const usableWidth = pageWidth - marginX * 2;
+    let y = 72;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(15);
+    doc.text('Contrato de confidencialidad y seguridad de la información', marginX, y, { maxWidth: usableWidth });
+    y += 34;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9.5);
+    doc.setTextColor(90, 90, 90);
+    const today = new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+    doc.text('Emitido para: ' + currentClientName + '  ·  Fecha de emisión: ' + today, marginX, y);
+    y += 26;
+
+    doc.setTextColor(20, 20, 20);
+    doc.setFontSize(10.5);
+    const intro = 'Entre Revenue Platforms Online, operando bajo el nombre comercial "Supa Fire Technology Online" (en adelante, "el Proveedor"), y ' + currentClientName + ' (en adelante, "el Cliente"), se establece el presente acuerdo de confidencialidad y seguridad de la información, en el marco de los servicios de infraestructura tecnológica contratados por el Cliente.';
+    const introLines = doc.splitTextToSize(intro, usableWidth);
+    doc.text(introLines, marginX, y);
+    y += introLines.length * 14 + 18;
+
+    CONTRACT_SECTIONS.forEach(function(section){
+      const title = section[0];
+      const body = section[1];
+      const bodyLines = doc.splitTextToSize(body, usableWidth);
+      const blockHeight = 18 + bodyLines.length * 14 + 14;
+      if(y + blockHeight > pageHeight - 60){
+        doc.addPage();
+        y = 72;
+      }
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10.5);
+      doc.text(title, marginX, y);
+      y += 16;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10.5);
+      doc.text(bodyLines, marginX, y);
+      y += bodyLines.length * 14 + 14;
+    });
+
+    const fileSlug = currentClientName.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'cliente';
+    doc.save('contrato-confidencialidad-' + fileSlug + '.pdf');
+  }
+
+  document.getElementById('downloadContractBtn').addEventListener('click', downloadContractPdf);
 
   // ===== Simulaciones cosméticas (sin datos reales) =====
   // Kurt pidió que esto se vea "como una empresa grande" sin construir
@@ -386,6 +578,42 @@
       }, 35);
     }
     typeLine();
+  }
+
+  function startInfraStats(){
+    const uptimeEl = document.getElementById('statUptime');
+    const latencyEl = document.getElementById('statLatency');
+    const requestsEl = document.getElementById('statRequests');
+    let requests = 128;
+    function tick(){
+      uptimeEl.textContent = (99.9 + Math.random() * 0.09).toFixed(2) + '%';
+      latencyEl.textContent = Math.round(14 + Math.random() * 14) + 'ms';
+      requests += Math.round(Math.random() * 9);
+      requestsEl.textContent = requests;
+    }
+    tick();
+    setInterval(tick, 3000);
+  }
+
+  function startStoreSync(){
+    const appStoreEl = document.getElementById('appStoreSync');
+    const googlePlayEl = document.getElementById('googlePlaySync');
+    let appStoreSeconds = 90;
+    let googlePlaySeconds = 40;
+    function fmt(seconds){
+      if(seconds < 60) return 'Sincronizado hace ' + seconds + 's';
+      return 'Sincronizado hace ' + Math.floor(seconds / 60) + ' min';
+    }
+    function tick(){
+      appStoreSeconds += 5;
+      googlePlaySeconds += 5;
+      if(appStoreSeconds > 600) appStoreSeconds = 0;
+      if(googlePlaySeconds > 480) googlePlaySeconds = 0;
+      appStoreEl.textContent = fmt(appStoreSeconds);
+      googlePlayEl.textContent = fmt(googlePlaySeconds);
+    }
+    tick();
+    setInterval(tick, 5000);
   }
 
   loadDashboard();
