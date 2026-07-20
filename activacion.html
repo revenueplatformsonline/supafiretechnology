@@ -173,6 +173,54 @@
   }
   select:focus{ border-color: var(--blue); }
 
+  textarea{
+    width:100%;
+    padding: 13px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-alt);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.96rem;
+    margin-bottom: 20px;
+    outline: none;
+    resize: vertical;
+    min-height: 72px;
+  }
+  textarea:focus{ border-color: var(--blue); box-shadow: 0 0 0 3px rgba(43,108,246,0.12); }
+
+  .checkbox-group{
+    display:flex;
+    flex-wrap:wrap;
+    gap: 8px 16px;
+    margin-bottom: 22px;
+  }
+  .checkbox-group label{
+    display:flex;
+    align-items:center;
+    gap: 7px;
+    font-size: 0.86rem;
+    color: var(--ink-soft);
+    font-weight: 400;
+    margin-bottom: 0;
+    cursor: pointer;
+  }
+  .checkbox-group input[type=checkbox]{ width:16px; height:16px; accent-color: var(--blue); cursor:pointer; }
+
+  .btn-secondary{
+    width:100%;
+    padding: 13px;
+    border-radius: 10px;
+    background: transparent;
+    border: 1px solid var(--line-strong);
+    color: var(--ink-soft);
+    font-weight: 600;
+    font-size: 0.92rem;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  .btn-secondary:hover{ border-color: var(--blue); color: var(--ink); }
+
   .file-drop{
     display:block;
     border: 1.5px dashed var(--line-strong);
@@ -334,15 +382,16 @@
       <div class="seg done" id="seg1"></div>
       <div class="seg active" id="seg2"></div>
       <div class="seg" id="seg3"></div>
+      <div class="seg" id="seg4"></div>
     </div>
 
     <div class="card">
 
-      <!-- STEP: FORM -->
-      <div id="formStep">
-        <div class="eyebrow"><span class="dot"></span>ÚLTIMO PASO ANTES DE PAGAR</div>
-        <h1>Verifica tu identidad</h1>
-        <p class="sub">Completa estos datos y subí una foto de tu documento de identidad. Apenas lo enviás, te llevamos al pago — y en cuanto termines, tu cuenta se crea sola.</p>
+      <!-- STEP: APP DETAILS -->
+      <div id="appDetailsStep">
+        <div class="eyebrow"><span class="dot"></span>CONTANOS SOBRE TU APP</div>
+        <h1>Antes de seguir, contanos un poco más</h1>
+        <p class="sub">Esto nos ayuda a preparar tu app desde el primer día. Después de esto viene la verificación de identidad.</p>
 
         <div class="plan-detected" id="planDetected" style="display:none;">
           <div class="pd-icon">
@@ -353,6 +402,91 @@
             <div class="pd-plan" id="pdPlanName">—</div>
           </div>
         </div>
+
+        <div class="error-box" id="appDetailsError"></div>
+
+        <form id="appDetailsForm" novalidate>
+          <label for="appCategory">Categoría de tu app</label>
+          <select id="appCategory">
+            <option value="fitness">Fitness / entrenamiento</option>
+            <option value="nutricion">Nutrición</option>
+            <option value="gimnasio">Gimnasio físico</option>
+            <option value="combinado">Gimnasio físico + app</option>
+            <option value="otro">Otro</option>
+          </select>
+
+          <label for="targetAudience">¿A quién le vas a vender? (público objetivo)</label>
+          <input type="text" id="targetAudience" placeholder="Ej. Adultos de 25 a 45 años que entrenan en casa" autocomplete="off">
+          <div class="field-error" id="err-targetAudience">Contanos brevemente a quién le vas a vender.</div>
+
+          <label for="expectedUsers">¿Cuántos usuarios esperás en los primeros 3 meses?</label>
+          <select id="expectedUsers">
+            <option value="menos-20">Menos de 20</option>
+            <option value="20-50">Entre 20 y 50</option>
+            <option value="50-100">Entre 50 y 100</option>
+            <option value="100-300">Entre 100 y 300</option>
+            <option value="mas-300">Más de 300</option>
+          </select>
+
+          <label for="hasPhysicalGym">¿Ya tenés un gimnasio o negocio físico?</label>
+          <select id="hasPhysicalGym">
+            <option value="no">No, solo la app</option>
+            <option value="si">Sí, tengo local físico</option>
+          </select>
+
+          <label for="offeringType">¿Qué vas a ofrecer?</label>
+          <select id="offeringType">
+            <option value="digital">Solo contenido digital</option>
+            <option value="fisico">Solo acceso físico</option>
+            <option value="ambos">Ambos</option>
+          </select>
+
+          <label for="brandColor">Color principal de tu marca</label>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+            <input type="color" id="brandColor" value="#4F46E5" style="height:42px;width:60px;border-radius:8px;border:1px solid var(--line-strong);cursor:pointer;background:var(--bg-alt);">
+            <span style="font-size:0.84rem;color:var(--ink-dim);">Lo podés cambiar después</span>
+          </div>
+
+          <label for="hasLogo">¿Ya tenés un logo?</label>
+          <select id="hasLogo">
+            <option value="no">No todavía</option>
+            <option value="si">Sí, ya tengo</option>
+          </select>
+
+          <label for="socialUrl">Instagram o web actual <span style="font-weight:400;color:var(--ink-dim)">(opcional)</span></label>
+          <input type="text" id="socialUrl" placeholder="@tuusuario o tusitio.com" autocomplete="off">
+
+          <label>¿Qué funcionalidades te interesan más? <span style="font-weight:400;color:var(--ink-dim)">(opcional)</span></label>
+          <div class="checkbox-group">
+            <label><input type="checkbox" name="features" value="rutinas">Rutinas de entrenamiento</label>
+            <label><input type="checkbox" name="features" value="nutricion">Planes de nutrición</label>
+            <label><input type="checkbox" name="features" value="ligas">Ligas y afiliados</label>
+            <label><input type="checkbox" name="features" value="soporte">Chat de soporte</label>
+            <label><input type="checkbox" name="features" value="checkin">Check-in con QR</label>
+            <label><input type="checkbox" name="features" value="gimnasio">Gimnasio físico</label>
+          </div>
+
+          <label for="referralSource">¿Cómo nos conociste?</label>
+          <select id="referralSource">
+            <option value="instagram">Instagram</option>
+            <option value="google">Google</option>
+            <option value="recomendacion">Recomendación</option>
+            <option value="whatsapp">WhatsApp</option>
+            <option value="otro">Otro</option>
+          </select>
+
+          <label for="comments">¿Algo más que quieras que tenga tu app? <span style="font-weight:400;color:var(--ink-dim)">(opcional)</span></label>
+          <textarea id="comments" placeholder="Contanos cualquier idea que tengas en mente..."></textarea>
+
+          <button type="submit" class="btn-primary" id="appDetailsSubmitBtn">Siguiente</button>
+        </form>
+      </div>
+
+      <!-- STEP: FORM -->
+      <div id="formStep" style="display:none;">
+        <div class="eyebrow"><span class="dot"></span>ÚLTIMO PASO ANTES DE PAGAR</div>
+        <h1>Verifica tu identidad</h1>
+        <p class="sub">Completa estos datos y subí una foto de tu documento de identidad. Apenas lo enviás, te llevamos al pago — y en cuanto termines, tu cuenta se crea sola.</p>
 
         <div class="error-box" id="formError"></div>
 
@@ -395,6 +529,7 @@
           <div class="field-error" id="err-idDoc">Subí o tomá una foto de tu documento para continuar.</div>
 
           <button type="submit" class="btn-primary" id="submitBtn">Enviar para verificación</button>
+          <button type="button" class="btn-secondary" id="backToAppDetailsBtn">← Volver</button>
         </form>
       </div>
 
@@ -442,6 +577,10 @@
 
   const MAX_FILE_BYTES = 15 * 1024 * 1024; // 15MB — chequeo rápido en el navegador, el límite real lo pone el bucket
 
+  const appDetailsStep = document.getElementById('appDetailsStep');
+  const appDetailsForm = document.getElementById('appDetailsForm');
+  const appDetailsError = document.getElementById('appDetailsError');
+  const backToAppDetailsBtn = document.getElementById('backToAppDetailsBtn');
   const form = document.getElementById('activationForm');
   const formStep = document.getElementById('formStep');
   const loadingStep = document.getElementById('loadingStep');
@@ -449,6 +588,7 @@
   const formError = document.getElementById('formError');
   const seg2 = document.getElementById('seg2');
   const seg3 = document.getElementById('seg3');
+  const seg4 = document.getElementById('seg4');
   const planSelect = document.getElementById('plan');
   const planDetected = document.getElementById('planDetected');
   const pdPlanName = document.getElementById('pdPlanName');
@@ -534,6 +674,52 @@
     }
   }
   loadPlans();
+
+  // ===== Paso 1: cuestionario sobre la app =====
+  // Guardado como un objeto libre (appDetails) en vez de leerlo campo por
+  // campo en el submit final — así el insert de más abajo simplemente
+  // manda este objeto entero como signup_requests.app_details (jsonb),
+  // sin que agregar/sacar una pregunta acá requiera tocar el submit.
+  let appDetails = null;
+
+  appDetailsForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    appDetailsError.classList.remove('show');
+
+    const targetAudience = document.getElementById('targetAudience').value.trim();
+    document.getElementById('err-targetAudience').classList.toggle('show', targetAudience.length === 0);
+    if(targetAudience.length === 0) return;
+
+    const features = Array.from(document.querySelectorAll('input[name="features"]:checked')).map(function(el){ return el.value; });
+
+    appDetails = {
+      category: document.getElementById('appCategory').value,
+      targetAudience: targetAudience,
+      expectedUsers: document.getElementById('expectedUsers').value,
+      hasPhysicalGym: document.getElementById('hasPhysicalGym').value,
+      offeringType: document.getElementById('offeringType').value,
+      brandColor: document.getElementById('brandColor').value,
+      hasLogo: document.getElementById('hasLogo').value,
+      socialUrl: document.getElementById('socialUrl').value.trim(),
+      features: features,
+      referralSource: document.getElementById('referralSource').value,
+      comments: document.getElementById('comments').value.trim()
+    };
+
+    appDetailsStep.style.display = 'none';
+    formStep.style.display = 'block';
+    seg2.classList.remove('active');
+    seg2.classList.add('done');
+    seg3.classList.add('active');
+  });
+
+  backToAppDetailsBtn.addEventListener('click', function(){
+    formStep.style.display = 'none';
+    appDetailsStep.style.display = 'block';
+    seg3.classList.remove('active');
+    seg2.classList.remove('done');
+    seg2.classList.add('active');
+  });
 
   idDocInput.addEventListener('change', function(){
     const f = idDocInput.files && idDocInput.files[0];
@@ -655,9 +841,9 @@
     submitBtn.disabled = true;
     formStep.style.display = 'none';
     loadingStep.classList.add('show');
-    seg2.classList.remove('active');
-    seg2.classList.add('done');
-    seg3.classList.add('active');
+    seg3.classList.remove('active');
+    seg3.classList.add('done');
+    seg4.classList.add('active');
     statusLine.textContent = 'Subiendo tu documento...';
 
     const requestId = crypto.randomUUID();
@@ -676,7 +862,8 @@
           phone: phone,
           tax_id: taxId || null,
           requested_plan_id: requestedPlanId || null,
-          id_document_path: docPath
+          id_document_path: docPath,
+          app_details: appDetails
         });
       })
       .then(function(insertRes){
@@ -698,9 +885,9 @@
       .catch(function(err){
         loadingStep.classList.remove('show');
         formStep.style.display = 'block';
-        seg2.classList.add('active');
-        seg2.classList.remove('done');
-        seg3.classList.remove('active');
+        seg3.classList.add('active');
+        seg3.classList.remove('done');
+        seg4.classList.remove('active');
         submitBtn.disabled = false;
         formError.textContent = 'No pudimos enviar tu solicitud — probá de nuevo en unos segundos. (' + (err && err.message ? err.message : 'error desconocido') + ')';
         formError.classList.add('show');
