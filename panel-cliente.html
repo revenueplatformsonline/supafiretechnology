@@ -446,27 +446,64 @@
   });
 
   // Contrato generado en el navegador (jsPDF, sin backend) — mismo texto
-  // para todos los clientes, solo cambia el nombre de marca y la fecha de
-  // emisión. Sin firma: es una constancia informativa del acuerdo de
-  // servicio ya vigente, no un documento que requiera trámite legal aparte.
+  // para todos los clientes, solo cambia el nombre de marca, la fecha de
+  // emisión y el número de referencia. Sin firma: es una constancia
+  // informativa del acuerdo de servicio ya vigente, no un documento que
+  // requiera trámite legal aparte. Se redactó como un contrato completo
+  // (portada, definiciones, ~19 cláusulas) en vez de un resumen corto,
+  // para que sea un documento serio que el Cliente pueda archivar.
   const CONTRACT_SECTIONS = [
-    ['1. OBJETO',
-      'El Proveedor entrega al Cliente infraestructura tecnológica dedicada — servidor privado virtual (VPS), base de datos Supabase, servicios Firebase y gestión de publicación en App Store y Google Play — para operar una aplicación móvil de membresías bajo la marca propia del Cliente.'],
-    ['2. INFORMACIÓN CONFIDENCIAL',
-      'Se considera información confidencial, sin limitarse a: credenciales de acceso a servidores, bases de datos y paneles de administración; datos personales de los usuarios finales del Cliente; información de pagos y facturación; configuración técnica de la infraestructura; y cualquier dato comercial compartido entre las partes durante la prestación del servicio.'],
-    ['3. OBLIGACIONES DEL PROVEEDOR',
-      'El Proveedor se compromete a no divulgar ni compartir con terceros no autorizados la información confidencial del Cliente; a mantener medidas de seguridad razonables sobre los servidores y bases de datos que alojan su información (cifrado en tránsito, respaldo periódico, control de accesos); y a notificarle ante cualquier incidente de seguridad que pudiera comprometer sus datos.'],
-    ['4. OBLIGACIONES DEL CLIENTE',
-      'El Cliente se compromete a resguardar sus propias credenciales de acceso al Panel Owner sin compartirlas con personas ajenas a su organización; a utilizar la infraestructura entregada exclusivamente para los fines de su aplicación; y a no intentar acceder a infraestructura, datos o paneles de otros clientes del Proveedor.'],
-    ['5. PROPIEDAD DE LA INFORMACIÓN',
-      'Los datos generados por la aplicación del Cliente (usuarios, membresías, pagos, contenido) son propiedad exclusiva del Cliente. El Proveedor actúa únicamente como operador técnico de la infraestructura sobre la que dichos datos se almacenan.'],
-    ['6. USO DE LA INFORMACIÓN',
-      'El Proveedor no venderá, cederá ni utilizará la información del Cliente con fines distintos a la prestación del servicio contratado, salvo requerimiento legal expreso de autoridad competente.'],
-    ['7. VIGENCIA',
-      'Este acuerdo permanece vigente mientras el Cliente mantenga un plan activo con el Proveedor. Las obligaciones de confidencialidad descritas sobreviven a la finalización del servicio respecto de la información ya intercambiada entre las partes.'],
-    ['8. GENERACIÓN AUTOMÁTICA',
-      'Este documento fue generado automáticamente desde el Panel de Cliente de Supa Fire Technology Online y constituye una constancia informativa del acuerdo de confidencialidad y seguridad ya vigente entre las partes por la prestación del servicio contratado. No requiere firma para su validez como tal.']
+    ['1. DEFINICIONES',
+      '"Proveedor" refiere a Revenue Platforms Online, operando bajo el nombre comercial Supa Fire Technology Online. "Cliente" refiere a la marca u organización identificada en la portada de este documento. "Servicio" refiere a la infraestructura tecnológica y de publicación descrita en la Cláusula 3. "Panel Owner" y "Panel Member" refieren a las aplicaciones administrativas y de usuario final entregadas al Cliente como parte del Servicio. "Información Confidencial" tiene el alcance definido en la Cláusula 5. "Documento de Identidad" refiere al comprobante de identidad presentado por el Cliente durante el proceso de verificación descrito en la Cláusula 10.'],
+    ['2. PREÁMBULO',
+      'Entre el Proveedor y el Cliente se establece el presente acuerdo de confidencialidad y seguridad de la información, en el marco de los servicios de infraestructura tecnológica contratados por el Cliente a través de la plataforma pública de Supa Fire Technology Online. Este acuerdo entra en vigencia en el momento en que el Cliente completa su proceso de activación y queda registrado como cliente del Proveedor, sin necesidad de un trámite de firma adicional, según se detalla en la Cláusula 19.'],
+    ['3. OBJETO Y ALCANCE DEL SERVICIO',
+      'El Proveedor entrega al Cliente infraestructura tecnológica dedicada para operar una aplicación móvil de membresías y/o fitness bajo la marca propia del Cliente. Esta infraestructura incluye, sin limitarse a: un servidor privado virtual (VPS) dedicado; una base de datos administrada sobre Supabase, incluyendo autenticación, almacenamiento de archivos y funciones de backend; servicios de Firebase para notificaciones y funcionalidad complementaria de la aplicación; y la gestión del proceso de publicación y mantenimiento de la aplicación en App Store y Google Play a nombre del Cliente.'],
+    ['4. ENTREGABLES INCLUIDOS',
+      'Como parte del Servicio, el Proveedor entrega al Cliente un Panel Owner (para la administración de su negocio, contenido, planes y miembros) y un Panel Member (la aplicación que utilizan los usuarios finales del Cliente), ambos desplegados con la marca, colores y configuración propios del Cliente sobre la infraestructura compartida descrita en la Cláusula 3. El código de activación necesario para vincular estos paneles a la cuenta del Cliente se entrega una vez completado el proceso de verificación de identidad descrito en la Cláusula 10.'],
+    ['5. INFORMACIÓN CONFIDENCIAL — ALCANCE',
+      'Se considera Información Confidencial, sin limitarse a: credenciales de acceso a servidores, bases de datos y paneles de administración; datos personales de los usuarios finales del Cliente (nombres, contactos, historial de uso, información de pago); el Documento de Identidad presentado por el Cliente; información de facturación y de los planes contratados; configuración técnica de la infraestructura entregada; y cualquier dato comercial o estratégico compartido entre las partes durante la prestación del Servicio.'],
+    ['6. EXCLUSIONES A LA CONFIDENCIALIDAD',
+      'No se considera Información Confidencial aquella que: (a) sea o pase a ser de dominio público sin incumplimiento de este acuerdo; (b) ya fuera conocida por la parte receptora antes de su divulgación, según sus propios registros; (c) sea desarrollada de forma independiente por una parte sin recurrir a la Información Confidencial de la otra; o (d) deba divulgarse por requerimiento expreso de una autoridad competente, en cuyo caso la parte obligada notificará a la otra en la medida en que la ley lo permita.'],
+    ['7. OBLIGACIONES DE CONFIDENCIALIDAD DEL PROVEEDOR',
+      'El Proveedor se compromete a no divulgar ni compartir con terceros no autorizados la Información Confidencial del Cliente, a utilizarla exclusivamente para la prestación del Servicio, y a limitar su acceso interno al personal y sistemas estrictamente necesarios para operar la infraestructura descrita en la Cláusula 3.'],
+    ['8. OBLIGACIONES DE SEGURIDAD DEL PROVEEDOR',
+      'El Proveedor se compromete a mantener medidas de seguridad razonables sobre los servidores, bases de datos y paneles que alojan la Información Confidencial del Cliente, incluyendo cifrado en tránsito, respaldos periódicos de la base de datos, control de accesos administrativos, y separación lógica de los datos de cada cliente dentro de la infraestructura compartida.'],
+    ['9. NOTIFICACIÓN DE INCIDENTES DE SEGURIDAD',
+      'Ante cualquier incidente de seguridad que razonablemente pudiera comprometer la Información Confidencial del Cliente, el Proveedor se compromete a notificarlo al Cliente en un plazo razonable desde que tome conocimiento del incidente, junto con una descripción general de lo ocurrido y de las medidas tomadas para mitigarlo.'],
+    ['10. VERIFICACIÓN DE IDENTIDAD',
+      'Como parte del proceso de activación, el Cliente presenta un Documento de Identidad al Proveedor a través del formulario público de registro. Este documento se almacena de forma privada y es revisado por el Proveedor antes de habilitar el código de activación de los Paneles Owner/Member. El Documento de Identidad se trata en todo momento como Información Confidencial conforme a la Cláusula 5.'],
+    ['11. OBLIGACIONES DEL CLIENTE',
+      'El Cliente se compromete a resguardar sus propias credenciales de acceso al Panel Owner sin compartirlas con personas ajenas a su organización; a utilizar la infraestructura entregada exclusivamente para los fines de su propia aplicación; y a no intentar acceder, de forma directa o indirecta, a la infraestructura, datos o paneles de otros clientes del Proveedor.'],
+    ['12. PROPIEDAD DE LOS DATOS',
+      'Los datos generados por la aplicación del Cliente — usuarios finales, membresías, pagos, contenido cargado por el Cliente — son propiedad exclusiva del Cliente. El Proveedor actúa únicamente como operador técnico de la infraestructura sobre la que dichos datos se almacenan y procesan, y no adquiere derecho de propiedad alguno sobre ellos por la sola prestación del Servicio.'],
+    ['13. USO DE LA INFORMACIÓN Y PROHIBICIÓN DE CESIÓN A TERCEROS',
+      'El Proveedor no venderá, cederá ni utilizará la Información Confidencial del Cliente con fines distintos a la prestación del Servicio contratado, salvo requerimiento legal expreso de autoridad competente conforme a la Cláusula 6.'],
+    ['14. PROVEEDORES SUBYACENTES DE INFRAESTRUCTURA',
+      'El Cliente reconoce que el Servicio se apoya en infraestructura de terceros proveedores (entre otros, Supabase, Firebase, Apple App Store y Google Play), cada uno sujeto a sus propios términos de servicio. El Proveedor selecciona y administra estos proveedores subyacentes en representación del Cliente, pero no es responsable por interrupciones o cambios de política originados directamente por dichos terceros.'],
+    ['15. LIMITACIÓN DE RESPONSABILIDAD',
+      'Ninguna de las partes será responsable frente a la otra por daños indirectos, incidentales o consecuentes derivados de este acuerdo, salvo en casos de incumplimiento doloso o negligencia grave en el manejo de la Información Confidencial.'],
+    ['16. VIGENCIA Y TERMINACIÓN',
+      'Este acuerdo permanece vigente mientras el Cliente mantenga un plan activo con el Proveedor. Cualquiera de las partes puede dar por terminada la relación de servicio conforme a los términos comerciales del plan contratado, sin que ello afecte por sí solo la validez de este acuerdo respecto de la información ya intercambiada.'],
+    ['17. SUPERVIVENCIA DE OBLIGACIONES',
+      'Las obligaciones de confidencialidad y seguridad descritas en este documento sobreviven a la finalización del Servicio respecto de toda Información Confidencial intercambiada entre las partes durante su vigencia.'],
+    ['18. MODIFICACIONES',
+      'El Proveedor podrá actualizar este documento para reflejar cambios en el Servicio o en sus prácticas de seguridad. La versión vigente es siempre la disponible para descarga desde el Panel de Cliente al momento de la consulta.'],
+    ['19. GENERACIÓN AUTOMÁTICA Y ACEPTACIÓN SIN FIRMA',
+      'Este documento fue generado automáticamente desde el Panel de Cliente de Supa Fire Technology Online y constituye una constancia informativa del acuerdo de confidencialidad y seguridad ya vigente entre las partes por la activación y uso del Servicio. La aceptación de este acuerdo queda manifestada por la propia activación de la cuenta del Cliente, por lo que este documento no requiere firma para su validez como constancia del acuerdo de servicio.']
   ];
+
+  function addContractFooter(doc, pageNum, pageCount, clientName){
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    doc.setDrawColor(220, 224, 230);
+    doc.line(56, pageHeight - 46, pageWidth - 56, pageHeight - 46);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(140, 148, 160);
+    doc.text('Supa Fire Technology Online — Contrato de confidencialidad y seguridad — ' + clientName, 56, pageHeight - 32);
+    doc.text('Página ' + pageNum + ' de ' + pageCount, pageWidth - 56, pageHeight - 32, { align: 'right' });
+  }
 
   function downloadContractPdf(){
     if(!window.jspdf || !currentClientName) return;
@@ -475,45 +512,120 @@
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
     const usableWidth = pageWidth - marginX * 2;
-    let y = 72;
+    const today = new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+    const docRef = 'SFT-CONF-' + new Date().getFullYear() + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
 
+    // Portada — página 1, sola.
+    let y = 210;
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(15);
-    doc.text('Contrato de confidencialidad y seguridad de la información', marginX, y, { maxWidth: usableWidth });
-    y += 34;
+    doc.setFontSize(24);
+    doc.setTextColor(20, 20, 20);
+    const titleLines = doc.splitTextToSize('Contrato de Confidencialidad y Seguridad de la Información', usableWidth - 40);
+    doc.text(titleLines, pageWidth / 2, y, { align: 'center', maxWidth: usableWidth - 40 });
+    y += titleLines.length * 30 + 24;
 
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9.5);
+    doc.setFontSize(12);
     doc.setTextColor(90, 90, 90);
-    const today = new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
-    doc.text('Emitido para: ' + currentClientName + '  ·  Fecha de emisión: ' + today, marginX, y);
+    doc.text('Entre Revenue Platforms Online (Supa Fire Technology Online) y ' + currentClientName, pageWidth / 2, y, { align: 'center', maxWidth: usableWidth - 40 });
+    y += 60;
+
+    doc.setDrawColor(200, 205, 214);
+    doc.line(pageWidth / 2 - 90, y, pageWidth / 2 + 90, y);
+    y += 40;
+
+    doc.setFontSize(10.5);
+    doc.setTextColor(60, 60, 60);
+    const coverLines = [
+      ['Cliente', currentClientName],
+      ['Proveedor', 'Revenue Platforms Online — Supa Fire Technology Online'],
+      ['Referencia del documento', docRef],
+      ['Fecha de emisión', today],
+    ];
+    coverLines.forEach(function(row){
+      doc.setFont('helvetica', 'bold');
+      doc.text(row[0] + ':', pageWidth / 2 - 140, y);
+      doc.setFont('helvetica', 'normal');
+      doc.text(row[1], pageWidth / 2 - 30, y);
+      y += 22;
+    });
+
+    y += 50;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9.5);
+    doc.setTextColor(120, 126, 136);
+    const coverNote = 'Documento generado automáticamente desde el Panel de Cliente de Supa Fire Technology Online. Constituye una constancia informativa del acuerdo de confidencialidad y seguridad vigente entre las partes — ver Cláusula 19. No requiere firma.';
+    const coverNoteLines = doc.splitTextToSize(coverNote, usableWidth - 80);
+    doc.text(coverNoteLines, pageWidth / 2, y, { align: 'center', maxWidth: usableWidth - 80 });
+
+    // Resumen ejecutivo — página 2, en lenguaje llano antes de las
+    // cláusulas formales, para que el Cliente entienda el acuerdo sin
+    // tener que leer las 19 cláusulas primero.
+    doc.addPage();
+    y = 72;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(20, 20, 20);
+    doc.text('Resumen ejecutivo', marginX, y);
     y += 26;
 
-    doc.setTextColor(20, 20, 20);
+    doc.setFont('helvetica', 'normal');
     doc.setFontSize(10.5);
-    const intro = 'Entre Revenue Platforms Online, operando bajo el nombre comercial "Supa Fire Technology Online" (en adelante, "el Proveedor"), y ' + currentClientName + ' (en adelante, "el Cliente"), se establece el presente acuerdo de confidencialidad y seguridad de la información, en el marco de los servicios de infraestructura tecnológica contratados por el Cliente.';
-    const introLines = doc.splitTextToSize(intro, usableWidth);
-    doc.text(introLines, marginX, y);
-    y += introLines.length * 14 + 18;
+    doc.setTextColor(40, 40, 40);
+    const summaryParagraphs = [
+      'Este documento explica, en términos simples, el acuerdo de confidencialidad y seguridad que ya está vigente entre ' + currentClientName + ' y Supa Fire Technology Online por el solo hecho de haber activado su cuenta en la plataforma. Las cláusulas formales que siguen a este resumen tienen el mismo peso que este texto — este resumen no las reemplaza, solo las hace más fáciles de leer de un vistazo.',
+      'En pocas palabras: Supa Fire Technology Online le entrega a ' + currentClientName + ' un servidor privado (VPS), una base de datos en Supabase, integración con Firebase, y la gestión de la publicación de su aplicación en App Store y Google Play. Todo eso corre sobre infraestructura compartida entre varios clientes, así que ambas partes se comprometen a proteger la información que se cruza en el camino.',
+      'Del lado del Proveedor: no vamos a compartir las credenciales, datos de usuarios finales, documento de identidad, ni ninguna otra información suya con terceros no autorizados, y mantenemos medidas de seguridad razonables (cifrado, respaldos, control de accesos) sobre la infraestructura que aloja esa información.',
+      'Del lado del Cliente: se espera que cuide sus propias credenciales de acceso al Panel Owner, que use la infraestructura entregada solo para su propia aplicación, y que no intente acceder a los datos o paneles de otros clientes de la plataforma.',
+      'Los datos que genera la aplicación del Cliente — sus usuarios, sus membresías, sus pagos, su contenido — son y siguen siendo propiedad del Cliente en todo momento. Supa Fire Technology Online solo opera la infraestructura técnica sobre la que esos datos viven.',
+      'Este acuerdo no tiene firma porque no hace falta: se activa solo, al mismo tiempo que se activa la cuenta del Cliente en la plataforma. Se puede descargar de nuevo en cualquier momento desde el Panel de Cliente.'
+    ];
+    summaryParagraphs.forEach(function(paragraph){
+      const lines = doc.splitTextToSize(paragraph, usableWidth);
+      if(y + lines.length * 14 + 16 > pageHeight - 70){
+        doc.addPage();
+        y = 72;
+      }
+      doc.text(lines, marginX, y);
+      y += lines.length * 14 + 16;
+    });
+
+    // Cuerpo del contrato — cláusulas formales, en su propia página.
+    doc.addPage();
+    y = 72;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(20, 20, 20);
+    doc.text('Cláusulas del acuerdo', marginX, y);
+    y += 28;
 
     CONTRACT_SECTIONS.forEach(function(section){
       const title = section[0];
       const body = section[1];
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10.5);
       const bodyLines = doc.splitTextToSize(body, usableWidth);
-      const blockHeight = 18 + bodyLines.length * 14 + 14;
-      if(y + blockHeight > pageHeight - 60){
+      const blockHeight = 18 + bodyLines.length * 14 + 16;
+      if(y + blockHeight > pageHeight - 70){
         doc.addPage();
         y = 72;
       }
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(10.5);
+      doc.setTextColor(20, 20, 20);
       doc.text(title, marginX, y);
       y += 16;
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(10.5);
+      doc.setTextColor(40, 40, 40);
       doc.text(bodyLines, marginX, y);
-      y += bodyLines.length * 14 + 14;
+      y += bodyLines.length * 14 + 16;
     });
+
+    const pageCount = doc.internal.getNumberOfPages();
+    for(let p = 2; p <= pageCount; p++){
+      doc.setPage(p);
+      addContractFooter(doc, p - 1, pageCount - 1, currentClientName);
+    }
 
     const fileSlug = currentClientName.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'cliente';
     doc.save('contrato-confidencialidad-' + fileSlug + '.pdf');
