@@ -630,6 +630,13 @@
   const urlParams = new URLSearchParams(window.location.search);
   const detectedPlanId = urlParams.get('plan_id') || null;
   const billingMode = urlParams.get('billing') === 'annual' ? 'annual' : 'monthly';
+  // "Programá tu app con nuestro equipo": un miembro de un cliente Supa
+  // Fire existente comparte su link ?ref={slug} (ver client-templates/
+  // member-app.html.tmpl del repo supafireowner, pantalla "Crea tu App")
+  // -- si ese código llega acá, se manda tal cual con la solicitud para
+  // que Kurt le acredite la comisión a mano una vez que el cliente nuevo
+  // pague de verdad (ver supafire_referral_commissions).
+  const referredByCode = (urlParams.get('ref') || '').trim() || null;
   const detectedPlanName = (function(){
     if (detectedPlanId) return null; // el id manda si está presente
     const planParam = (urlParams.get('plan') || '').toLowerCase().trim();
@@ -875,7 +882,8 @@
           tax_id: taxId || null,
           requested_plan_id: requestedPlanId || null,
           id_document_path: docPath,
-          app_details: appDetails
+          app_details: appDetails,
+          referred_by_code: referredByCode
         });
       })
       .then(function(insertRes){
