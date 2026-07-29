@@ -228,8 +228,18 @@
 
     <div class="card">
 
+      <!-- STATE: CONFIRM (gate manual -- ver nota de seguridad en el script) -->
+      <div id="confirmState" style="display:none;">
+        <div class="info-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h1>Tu pago se registró</h1>
+        <p class="sub">Hacé click para activar tu cuenta — es el último paso.</p>
+        <button type="button" class="btn-primary" id="activateBtn" style="width:100%">Activar mi cuenta →</button>
+      </div>
+
       <!-- STATE: LOADING -->
-      <div id="loadingState">
+      <div id="loadingState" style="display:none;">
         <div class="spinner-wrap">
           <div class="spinner"></div>
           <div class="status-line mono" id="statusLine">Confirmando tu pago y creando tu cuenta...</div>
@@ -304,13 +314,14 @@
   const SUPAFIRE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZubWJld3JsdXphamZjdmJvcGFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNzMxODYsImV4cCI6MjA5ODc0OTE4Nn0.Cbf55ftXjgd8OvQEJ95fkjVXbxwyBJrJ3_kQ3j-kYts";
   const supafire = window.supabase.createClient(SUPAFIRE_URL, SUPAFIRE_ANON_KEY);
 
+  const confirmState = document.getElementById('confirmState');
   const loadingState = document.getElementById('loadingState');
   const successState = document.getElementById('successState');
   const alreadyState = document.getElementById('alreadyState');
   const errorState = document.getElementById('errorState');
 
   function show(el){
-    [loadingState, successState, alreadyState, errorState].forEach(function(s){ s.style.display = s === el ? 'block' : 'none'; });
+    [confirmState, loadingState, successState, alreadyState, errorState].forEach(function(s){ s.style.display = s === el ? 'block' : 'none'; });
   }
 
   function showError(message){
@@ -337,38 +348,61 @@
     return;
   }
 
-  fetch(FINALIZE_URL + '?id=' + encodeURIComponent(requestId))
-    .then(function(res){ return res.json().then(function(body){ return { ok: res.ok, status: res.status, body: body }; }); })
-    .then(function(result){
-      const body = result.body || {};
-      if(result.ok && body.email){
-        document.getElementById('outEmail').textContent = body.email;
-        document.getElementById('outPassword').textContent = body.password;
-        show(successState);
-        // Deja la sesión activa en este navegador (supabase-js la persiste
-        // sola en localStorage) para que el botón "Ir a mi Panel" entre
-        // directo, sin pedirle a la persona que vuelva a escribir lo que
-        // recién le mostramos arriba. Si falla (raro), el botón igual
-        // funciona — panel-cliente.html cae al formulario de login normal.
-        supafire.auth.signInWithPassword({ email: body.email, password: body.password }).catch(function(){});
-      } else if(body.alreadyCreated){
-        // Mostrar con qué email quedó registrada esta solicitud ayuda a
-        // distinguir un reenvío real (mismo email cada vez que se reintenta)
-        // de un link viejo reabierto por error (el email no coincide con el
-        // que la persona acaba de usar en el formulario).
-        document.getElementById('alreadySub').textContent = body.email
-          ? 'Esta solicitud ya se procesó antes, con el email: ' + body.email
-          : 'Esta solicitud ya se procesó antes.';
-        show(alreadyState);
-      } else if(result.status === 403 && body.rejected){
-        showError('Tu solicitud fue rechazada al revisar tu documento. Escríbenos si crees que es un error.');
-      } else {
-        showError('Tu pago quedó registrado, pero algo falló al crear tu cuenta automáticamente. Escríbenos y lo resolvemos a mano. (' + (body.error || 'error desconocido') + ')');
-      }
-    })
-    .catch(function(err){
-      showError('No pudimos conectarnos para confirmar tu cuenta. Escríbenos y lo resolvemos a mano. (' + (err && err.message ? err.message : 'error de red') + ')');
-    });
+  // Auditoría de seguridad (29 jul 2026): esta página no prueba
+  // criptográficamente que hubo un pago real -- lo único que la protege
+  // es que requestId sea difícil de obtener sin haber pagado. Disparar la
+  // creación de la cuenta automáticamente al cargar la página (como hacía
+  // esto antes) significa que CUALQUIER cosa que cargue esta URL sin ser
+  // la persona real -- un escáner de links de email/WhatsApp, una vista
+  // previa de link, una pestaña duplicada, el id filtrado en un log --
+  // crea la cuenta gratis. Ahora requiere un click explícito de la
+  // persona antes de llamar a FINALIZE_URL.
+  //
+  // Además: history.replaceState saca el utm_content de la URL visible
+  // apenas se captura -- reduce que el id quede repetido en el historial
+  // del navegador o en una URL copiada/reenviada después de este punto
+  // (no cambia nada de cómo Stripe entrega el id la primera vez, eso está
+  // fuera de este archivo).
+  try{
+    window.history.replaceState(null, '', window.location.pathname);
+  }catch(e){}
+
+  show(confirmState);
+  document.getElementById('activateBtn').addEventListener('click', function(){
+    show(loadingState);
+    fetch(FINALIZE_URL + '?id=' + encodeURIComponent(requestId))
+      .then(function(res){ return res.json().then(function(body){ return { ok: res.ok, status: res.status, body: body }; }); })
+      .then(function(result){
+        const body = result.body || {};
+        if(result.ok && body.email){
+          document.getElementById('outEmail').textContent = body.email;
+          document.getElementById('outPassword').textContent = body.password;
+          show(successState);
+          // Deja la sesión activa en este navegador (supabase-js la persiste
+          // sola en localStorage) para que el botón "Ir a mi Panel" entre
+          // directo, sin pedirle a la persona que vuelva a escribir lo que
+          // recién le mostramos arriba. Si falla (raro), el botón igual
+          // funciona — panel-cliente.html cae al formulario de login normal.
+          supafire.auth.signInWithPassword({ email: body.email, password: body.password }).catch(function(){});
+        } else if(body.alreadyCreated){
+          // Mostrar con qué email quedó registrada esta solicitud ayuda a
+          // distinguir un reenvío real (mismo email cada vez que se reintenta)
+          // de un link viejo reabierto por error (el email no coincide con el
+          // que la persona acaba de usar en el formulario).
+          document.getElementById('alreadySub').textContent = body.email
+            ? 'Esta solicitud ya se procesó antes, con el email: ' + body.email
+            : 'Esta solicitud ya se procesó antes.';
+          show(alreadyState);
+        } else if(result.status === 403 && body.rejected){
+          showError('Tu solicitud fue rechazada al revisar tu documento. Escríbenos si crees que es un error.');
+        } else {
+          showError('Tu pago quedó registrado, pero algo falló al crear tu cuenta automáticamente. Escríbenos y lo resolvemos a mano. (' + (body.error || 'error desconocido') + ')');
+        }
+      })
+      .catch(function(err){
+        showError('No pudimos conectarnos para confirmar tu cuenta. Escríbenos y lo resolvemos a mano. (' + (err && err.message ? err.message : 'error de red') + ')');
+      });
+  });
 })();
 </script>
 
