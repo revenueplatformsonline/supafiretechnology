@@ -873,21 +873,29 @@
       .then(function(uploadRes){
         if(uploadRes.error) throw uploadRes.error;
         statusLine.textContent = 'Guardando tu solicitud...';
-        return supafire.from('signup_requests').insert({
-          id: requestId,
-          brand_name: appName,
-          owner_name: ownerName,
-          owner_email: email,
-          phone: phone,
-          tax_id: taxId || null,
-          requested_plan_id: requestedPlanId || null,
-          id_document_path: docPath,
-          app_details: appDetails,
-          referred_by_code: referredByCode
-        });
+        // Ya no inserta directo contra Supabase (auditoría de capacidad 30
+        // jul 2026): la policy directa de anon se eliminó -- este endpoint
+        // (en el repo supafireowner) aplica un rate-limit simple por IP
+        // antes de guardar la solicitud.
+        return fetch('https://supafireowner.vercel.app/api/signup-requests', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: requestId,
+            brand_name: appName,
+            owner_name: ownerName,
+            owner_email: email,
+            phone: phone,
+            tax_id: taxId || null,
+            requested_plan_id: requestedPlanId || null,
+            id_document_path: docPath,
+            app_details: appDetails,
+            referred_by_code: referredByCode
+          })
+        }).then(function(res){ return res.json().then(function(data){ return { ok: res.ok, data: data }; }); });
       })
-      .then(function(insertRes){
-        if(insertRes.error) throw insertRes.error;
+      .then(function(result){
+        if(!result.ok || result.data.error) throw new Error((result.data && result.data.error) || 'Error de conexión');
 
         const plan = plansById[requestedPlanId];
         const checkoutUrl = plan ? (billingMode === 'annual' ? plan.stripe_checkout_url_annual : plan.stripe_checkout_url) : null;
